@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% comment %}
+vim:ts=2:expandtab:ai
+$Id: $
+{% endcomment %}
+{% load i18n %}
+
+    {% block middle %}
+    <div class="panel panel-primary col-md-12">
+      <div class="panel-heading">
+        <h3>{% trans "Upload sample batch"%}</h3>
+      </div>
+      <div class="panel-body">
+        <form class="form-horizontal" method="post" action=""
+                 enctype="multipart/form-data">
+          {% csrf_token %}
+          {% if form.errors %}
+          <div class="alert alert-block alert-danger">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <p>{{form.errors}}</p>
+          </div>
+          {% endif %}
+          <div class="form-group">
+            <label for="batchid" class="col-md-2 control-label">
+              {{ form.batchid.label}}</label>
+            <div class="col-md-1">
+              {{ form.batchid }}
+            </div>
+            <label for="techid" class="col-md-1 control-label">
+              {{ form.techid.label}}</label>
+            <div class="col-md-2">
+              {{ form.techid }}</label>
+            </div>
+            <label for="samples" class="col-md-1 control-label">
+              {{ form.samples.label}}</label>
+            <div class="col-md-4">
+              {{ form.samples }}
+            </div>
+          </div>
+          <div class="form-group">
+            <button type="submit"
+                    class="col-md-2 btn btn-success btn-lg btn-block">
+              {% trans "Upload samples" %}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    {% endblock %}

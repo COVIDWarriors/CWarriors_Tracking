@@ -1,0 +1,31 @@
+      <table class="table table-hoverable table-responsive table-striped">
+        <thead class="thead-light">
+          <tr>
+            <th>&nbsp;</th>
+            {% for c in rack.listCols %}
+            <th>{{ c.1 }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+      {% regroup grid by row as row_list %}
+      {% for row, cols in row_list %}
+        <tr>
+          <td><strong>{{ row }}</strong></td>
+          {% for g in cols %}
+          <td id="grid{{g.row}}{{g.col}}">
+            {% if g.finished %}
+            <button class="btn btn-success"
+                    onClick="$('#SampleCode').html('{{g.sample}}');
+                             $('#SampleData').load('{% url "tracing:sample" g.sample %}');
+                             $('#Sample').modal();
+                            ">
+              {{g.sample}}
+            </button>
+            {% else %}
+            {{g.sample}}
+            {% endif %}
+          </td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+      </table>
