@@ -12,6 +12,6 @@ TECHS=[(t.id,t.name) for t in Technician.objects.all()]
 class loadBatch(forms.Form):
     batchid = forms.CharField(max_length=32,required=False,
                     label=_('Batch identifier (leave blank to geneate)'))
-    samples = forms.FileField(label=_('Samples file'))
+    samples = forms.FileField(label=_('Samples file'),required=False)
     techid = forms.IntegerField(label=_('Technician'),
                                 widget=forms.Select(choices=TECHS))

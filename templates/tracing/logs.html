@@ -23,18 +23,21 @@ $Id: $
     <div class="panel panel-primary col-md-12">
       <div class="panel-heading">
         <h2>
-          Logs for {%if batchid %} {{ batchid }} on {% endif %} {{ date|date:"Y-n-j" }}
+          Logs for {%if batchid %} {{ batchid }} on {% endif %}
+          {{ date|date:"Y-n-j" }}
         </h2>
       </div>
       <div class="panel-body">
         <div class="col-md-10">
           <form id="batchform" method="POST">
            {% csrf_token %}
-           {% trans "Date" %}<input name="date" id="date"
-                                    value="{{ date|date:"Y-n-j" }}">
-           {% trans "Batch" %}<input name="batchid" id="batchid"
-                                     value="{% if batchid %}{{ batchid }}{% endif %}">
-           <input type="Submit" value="Filtrar">
+           {% trans "Date" %}
+           <input name="date" id="date"
+                  value="{{ date|date:"Y-n-j" }}">
+           {% trans "Batch" %}
+           <input name="batchid" id="batchid"
+                  value="{% if batchid %}{{ batchid }}{% endif %}">
+           <input type="Submit" value="{% trans "Filter" %}">
           </form>
         </div>
         <div class="col-md-2">
@@ -54,7 +57,8 @@ $Id: $
                     class="glyphicon glyphicon-chevron-down"></span>
             </button>
             {{log.createdOn}}
-            {{log.rack.get_racktype_display}} {{log.rack.identifier}}
+            {{log.rack.get_racktype_display}}
+            {{log.rack.identifier}} ({{log.rack.numSamples}})
             {{log.get_what_display}} {{log.robot}}
           </h3>
         </div>

@@ -45,8 +45,8 @@ class Robot(models.Model):
     def libre(self):
         if self.station == 'A':
             return len(self.rack_set.all()) < 5
-        # Only deep wells in stations B and C, so there's only one free position
-        return len(self.rack_set.all()) == 0
+        # Stations B and C, have two free positions
+        return len(self.rack_set.all()) < 2
 
 
     pass
@@ -87,6 +87,7 @@ class Batch(models.Model):
                                   max_length=32, blank=True, null=True,
                                   db_index=True, editable=False)
     technician = models.ForeignKey(Technician)
+    preloaded = models.BooleanField(verbose_name=_('Pre-loaded batch'),default=True)
     started = models.DateTimeField(_('Processing started on'),
                                    db_index=True,null=True,blank=True)
     finished = models.DateTimeField(_('Processing completed on'),
@@ -106,7 +107,8 @@ class Batch(models.Model):
 
 
     def __str__(self):
-        return _('{0}: {1} -> {2} by {3}').format(self.identifier,
+        return _('{} ({}): {} -> {} by {}').format(self.identifier,
+                                                   len(self.sample_set.all()),
                                                    self.started,self.finished,
                                                    self.technician)
 
@@ -190,16 +192,20 @@ class Tray(models.Model):
     pass
 
 
-class RackType(models.Model):
-
-    pass
+#class RackType(models.Model):
+#
+#    pass
 
 
 class Rack(models.Model):
-    TYPE = [(1,'4x1'),(2,'4x2'),(3,'4x4'),(4,'4x6'),(5,'Deepwell')]
+    TYPE = [(1,'4x1'),(2,'4x2'),(3,'4x4'),(4,'4x6'),(5,'Deepwell'),
+            (6,'Extraction Plate'),(7,'PCR Plate')]
     DEEPWELL = 5
+    EP = 6
+    PCR = 7
     POSITION = [(1,'1'),(2,'2'),(3,'3'),(4,'4'),(5,'5'),(6,'6')]
-    ROWCOLS = {1:('D',1),2:('D',2),3:('D',4),4:('D',6),5:('H',12)} 
+    ROWCOLS = {1:('D',1),2:('D',2),3:('D',4),4:('D',6),5:('H',12),
+               6:('H',12),7:('H',12)} 
     identifier = models.CharField(verbose_name=_('identifier'),
                                   max_length=32, blank=True, null=True,
                                   db_index=True, editable=False)
@@ -279,18 +285,29 @@ class Rack(models.Model):
         if not self.identifier or self.identifier.strip() == '':
             self.identifier = uuid.uuid4().hex
         if self.robot:
-            # If a deep well enters directly into a station B, A is considered as passed
+            # If a deep well enters directly into a station B,
+            # A is considered as passed
             if (self.racktype == self.DEEPWELL and self.robot.station == 'B'
                                                and self.passed == ''):
                 self.passed = 'A'
-            if not self.robot.station in self.passed: self.passed += self.robot.station
+            # If an extraction plate enters directly into a station C,
+            # B is considered as passed
+            if (self.racktype == self.EP and self.robot.station == 'C'
+                                         and self.passed == ''):
+                self.passed = 'B'
+            if not self.robot.station in self.passed:
+                self.passed += self.robot.station
         else:
             # No robot, no position
             self.position = 0
-            if self.racktype == self.DEEPWELL and self.passed == 'ABC':
+            if self.racktype == self.DEEPWELL and self.passed == 'AB':
                 self.finished = True
-            # Only Deepwells go beyond A
-            if not self.racktype == self.DEEPWELL and self.passed == 'A':
+            if self.racktype == self.EP and self.passed == 'BC':
+                self.finished = True
+            if self.racktype == self.PCR and self.passed == 'C':
+                self.finished = True
+            # Others stop at A
+            if not self.finished and self.passed == 'A':
                 self.finished = True
                 
         super(Rack, self).save()
@@ -308,7 +325,8 @@ class Tube(models.Model):
                                   db_index=True, editable=False)
     row = models.CharField(max_length=1,choices=FILAS,db_index=True)
     col = models.IntegerField(choices=COLS,db_index=True)
-    history = models.CharField(max_length=80,default='',blank=True,editable=False)
+    history = models.CharField(max_length=250,default='',
+                               blank=True,editable=False)
     rack = models.ForeignKey(Rack)
     sample = models.ForeignKey(Sample)
 
@@ -323,14 +341,17 @@ class Tube(models.Model):
 
 
     def __str__(self):
-        return '{0} {1}:{2} {3}'.format(self.rack,self.row,self.col,self.sample.code)
+        return '{0} {1}:{2} {3}'.format(self.rack,self.row,self.col,
+                                        self.sample.code)
 
 
     def clean(self):
         if self.row > self.rack.ROWCOLS[self.rack.racktype][0]:
-            raise ValidationError({'row': _('Row %d does not exist' % self.row)})
+            raise ValidationError({'row':
+                                   _('Row %d does not exist' % self.row)})
         if self.col > self.rack.ROWCOLS[self.rack.racktype][1]:
-            raise ValidationError({'col': _('Column %d does not exist' % self.col)})
+            raise ValidationError({'col':
+                                   _('Column %d does not exist' % self.col)})
 
 
     def save(self, *args, **kwargs):
@@ -366,11 +387,12 @@ class Log(models.Model):
 
  
     class Meta:
-        ordering = ['createdOn']
+        ordering = ['-createdOn']
 
 
     def __str__(self):
-        return '{0} {1} {2}'.format(self.createdOn,self.rack,self.what,self.robot)
+        return '{} {} {} {}'.format(self.createdOn,
+                                    self.rack,self.what,self.robot)
 
 
     def save(self, *args, **kwargs):

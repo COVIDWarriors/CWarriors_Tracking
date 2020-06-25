@@ -95,7 +95,9 @@ def index(request):
                     if not r.isEmpty() or r.racktype == r.DEEPWELL]
     # Only Deepwells for B and C
     forB = Rack.objects.filter(robot=None,passed='A',racktype=Rack.DEEPWELL)
-    forC = Rack.objects.filter(robot=None,passed='AB',racktype=Rack.DEEPWELL)
+    forB = forB | Rack.objects.filter(robot=None,passed='',racktype=Rack.EP)
+    forC = Rack.objects.filter(robot=None,passed='B',racktype=Rack.EP)
+    forC = forC | Rack.objects.filter(robot=None,passed='',racktype=Rack.PCR)
 
     # Find robots with appropriate free positions
     freeA = [x for x in Robot.objects.filter(station='A') if x.libre()]
@@ -106,8 +108,9 @@ def index(request):
                                          'bstations': bstations,
                                          'cstations': cstations,
                                          'racktypes': Rack.TYPE,
-                                         'forA': forA, 'forB': forB, 'forC': forC,
-                                         'freeA': freeA, 'freeB': freeB, 'freeC': freeC})
+                                         'forA': forA, 'forB': forB,
+                                         'forC': forC, 'freeA': freeA,
+                                         'freeB': freeB, 'freeC': freeC})
 
 
 def move(request,rackid,robotid=None):
@@ -119,45 +122,126 @@ def move(request,rackid,robotid=None):
     if not robotid:
         # It is going out of current robot
         robot = rack.robot
-        rack.robot = None
-        log.what = 'O'
-        # Deepwells MUST leave station A first, they are always on tray 5
-        if (robot.station == 'A' and not rack.racktype == rack.DEEPWELL
-                                 and robot.rack_set.filter(position=5)):
-            messages.error(request,_('Deepwell MUST be removed first'))
-            return HttpResponseRedirect(reverse('tracing:inicio'))
-        # Deepwells must leave station A with all samples in them if there is any
-        if robot.station == 'A' and rack.racktype == rack.DEEPWELL and rack.isEmpty():
-            for tray in [4,1,6,3]:
-                r = robot.rack_set.filter(position=tray)
-                if len(r) == 1:
-                    for tube in r[0].tube_set.all().order_by('col','row'):
-                        place(tube,rack)
+        # Behaviour for station A
+        if robot.station == 'A':
+            # Deepwells MUST leave station A first, they are always on tray 5
+            if (not rack.racktype == rack.DEEPWELL
+                and robot.rack_set.filter(position=5)):
+                messages.error(request,_('Deepwell MUST be removed first'))
+                return HttpResponseRedirect(reverse('tracing:inicio'))
+            # Deepwells must leave station A with all samples in them
+            # if there is any
+            if (rack.racktype == rack.DEEPWELL and rack.isEmpty()):
+                for tray in [4,1,6,3]:
+                    r = robot.rack_set.filter(position=tray)
+                    if len(r) == 1:
+                        for tube in r[0].tube_set.all().order_by('col','row'):
+                           place(tube,rack)
+        # Behaviour for station B
+        if robot.station == 'B':
+            # Regardless of the rack leaving the robot first,
+            # samples have to leave station B on the EP rack
+            # We save database hits ...
+            if rack.racktype == rack.DEEPWELL:
+                source = [rack]
+                destination = Rack.objects.filter(robot=robot,position=1)
+            if rack.racktype == rack.EP:
+                destination = [rack]
+                source = Rack.objects.filter(robot=robot,position=4)
+            # Both racks available, move sample from source to destination
+            if source and destination:
+                if len(source) == 1 and len(destination) == 1:
+                    for tube in source[0].tube_set.all().order_by('col','row'):
+                        place(tube,destination[0])
+                else:
+                    messages.error(request,_('Unexpeted error while moving'))
+                    return HttpResponseRedirect(reverse('tracing:inicio'))
+        # Behaviour for station C
         if robot.station == 'C':
-            for tube in rack.tube_set.all():
-                tube.sample.finished = True
-                tube.sample.save()
+            # Regardless of the rack leaving the robot first,
+            # samples have to leave station C on the PCR rack
+            # We save database hits ...
+            if rack.racktype == rack.EP:
+                source = [rack]
+                destination = Rack.objects.filter(robot=robot,position=1)
+            if rack.racktype == rack.PCR:
+                destination = [rack]
+                source = Rack.objects.filter(robot=robot,position=4)
+            # Both racks available, move sample from source to destination
+            if source and destination:
+                if len(source) == 1 and len(destination) == 1:
+                    for tube in source[0].tube_set.all().order_by('col','row'):
+                        place(tube,destination[0])
+                        tube.sample.finished = True
+                        tube.sample.save()
+                else:
+                    messages.error(request,_('Unexpeted error while moving'))
+                    return HttpResponseRedirect(reverse('tracing:inicio'))
+        # Common behaviour for outgoing racks
         messages.success(request,_('{0} removed from {1}').format(rack,robot))
+        rack.robot = None
+        rack.save()
+        log.what = 'O'
     else:
+        # Behaviour for racks entering a robot
         robot = get_object_or_404(Robot,id=robotid)
-        # Deepwells can only be placed at position 5
-        if rack.racktype == rack.DEEPWELL:
-            if len(robot.rack_set.filter(position=5)) == 1:
-                messages.error(request,_('Tray 5 on {0} is occupied').format(robot))
-                return HttpResponseRedirect(reverse('tracing:inicio'))
-            rack.position = 5
-        else:
-            # Use first free position
-            used = [x.position for x in robot.rack_set.all() if not x.position ==  5]
-            empty = [x for x in [4,1,6,3] if x not in used]
-            if len(empty) == 0:
-                messages.error(request,_('No trays available on {0}').format(robot))
-                return HttpResponseRedirect(reverse('tracing:inicio'))
-            rack.position = empty[0]
+        # Behaviour for station A
+        if robot.station == 'A':
+            # Deepwells can only be placed at position 5
+            if rack.racktype == rack.DEEPWELL:
+                if len(robot.rack_set.filter(position=5)) == 1:
+                    messages.error(request,
+                                   _('Tray 5 on {0} is occupied').format(robot))
+                    return HttpResponseRedirect(reverse('tracing:inicio'))
+                rack.position = 5
+            else:
+                # Use first free position
+                used = [x.position for x in robot.rack_set.all()
+                        if not x.position ==  5]
+                empty = [x for x in [4,1,6,3] if x not in used]
+                if len(empty) == 0:
+                    messages.error(request,
+                                   _('No trays available on {0}').format(robot))
+                    return HttpResponseRedirect(reverse('tracing:inicio'))
+                rack.position = empty[0]
+        # Behaviour for station B
+        if robot.station == 'B':
+            # Deep wells onto tray 4
+            if rack.racktype == rack.DEEPWELL:
+                if len(robot.rack_set.filter(position=4)) == 1:
+                    messages.error(request,
+                                   _('Tray 4 on {0} is occupied').format(robot))
+                    return HttpResponseRedirect(reverse('tracing:inicio'))
+                rack.position = 4
+            # Extraction Plate onto tray 1
+            if rack.racktype == rack.EP:
+                if len(robot.rack_set.filter(position=1)) == 1:
+                    messages.error(request,
+                                   _('Tray 1 on {0} is occupied').format(robot))
+                    return HttpResponseRedirect(reverse('tracing:inicio'))
+                rack.position = 1
+        # Behaviour for station C
+        if robot.station == 'C':
+            # Extraction Plate onto tray 4
+            if rack.racktype == rack.EP:
+                if len(robot.rack_set.filter(position=4)) == 1:
+                    messages.error(request,
+                                   _('Tray 4 on {0} is occupied').format(robot))
+                    return HttpResponseRedirect(reverse('tracing:inicio'))
+                rack.position = 4
+            # PCR Plate onto tray 1
+            if rack.racktype == rack.PCR:
+                if len(robot.rack_set.filter(position=1)) == 1:
+                    messages.error(request,
+                                   _('Tray 1 on {0} is occupied').format(robot))
+                    return HttpResponseRedirect(reverse('tracing:inicio'))
+                rack.position = 1
+        # Common behaviour for IN
         rack.robot = robot
         log.what = 'I'
         messages.success(request,
                 _('{0} placed on tray {1} on {2}').format(rack,rack.position,robot))
+    # Common behaviour for IN and OUT
     rack.save()
     log.robot = robot
     log.rack = rack
@@ -186,19 +270,31 @@ def insert(request,rackid):
     batchid = request.session.get('batch',0)
     if request.method == 'POST':
        identifier = request.POST.get('identifier',None)
+    if not batchid:
+        response = JsonResponse({"error": _("No Batch selected")})
+        response.status_code = 404
+        return response
     if not identifier:
         response = JsonResponse({"error": _("Wrong Identifier")})
         response.status_code = 404
         return response
-    sample = Sample.objects.filter(batch__identifier=batchid,code=identifier)
-    if not len(sample) == 1:
-        response = JsonResponse({"error": _("Wrong Identifier")})
-        response.status_code = 404
-        return response
-    if sample[0].tube_set.first():
-        response = JsonResponse({"error": _("Sample {0} Added Already").format(identifier)})
-        response.status_code = 404
-        return response
+    batch = get_object_or_404(Batch,identifier=batchid)
+    sample = Sample.objects.filter(batch=batch,code=identifier)
+    if batch.preloaded and not len(sample) == 1:
+        return JsonResponse({"error":
+                             _("Wrong Sample Code {0}:{1}").format(batchid,
+                                                                  identifier)},
+                            status = 404)
+    if len(sample) and sample[0].tube_set.first():
+        return JsonResponse({"error":
+                             _("Sample {0} Added Already").format(identifier)},
+                             status = 404)
+    # If we do not have a sample yet, we do not have a pre-loaded batch
+    if not batch.preloaded and len(sample) == 0:
+        sample = [Sample()]
+        sample[0].code = identifier
+        sample[0].batch = batch
+        sample[0].save()
 
     # Create a new tube and add the sample
     tube = Tube()
@@ -211,7 +307,8 @@ def insert(request,rackid):
         sample[0].batch.started = datetime.datetime.now()
         sample[0].batch.save()
 
-    return JsonResponse({'row': tube.row, 'col': tube.col, 'sampleid': sample[0].code})
+    return JsonResponse({'row': tube.row, 'col': tube.col,
+                         'sampleid': sample[0].code})
 
 
 def fill(request,rackid=None,racktype=None):
@@ -229,7 +326,11 @@ def fill(request,rackid=None,racktype=None):
             rack = Rack()
             rack.racktype = racktype
             rack.save()
-            return HttpResponseRedirect(reverse('tracing:fill',kwargs={'rackid': rack.id}))
+            nextpage = reverse('tracing:fill',kwargs={'rackid': rack.id})
+            if int(racktype) in [rack.DEEPWELL, rack.EP, rack.PCR]:
+                # "Output" racks start life empty, no need to fill them
+                nextpage = reverse('tracing:inicio')
+            return HttpResponseRedirect(nextpage)
         if rackid and not racktype:
             # We want a given rack to display and fill
             rack = get_object_or_404(Rack,id=rackid)
@@ -279,7 +380,7 @@ def history(request):
     By default, it shows the activity of the current day.
     """
     batchid = False
-    lastdate = Log.objects.last().createdOn.date()
+    lastdate = Log.objects.first().createdOn.date()
     if request.method == 'GET':
        date = lastdate
     if request.method == 'POST':
@@ -318,14 +419,20 @@ def upload(request):
     batch.technician = get_object_or_404(Technician,
                                          id=form.cleaned_data['techid'])
     batch.save()
-    import csv,io
-    samples = request.FILES['samples']
-    samples.seek(0)
-    for line in csv.DictReader(io.StringIO(samples.read().decode('utf-8'))):
-        sample = Sample()
-        sample.batch = batch
-        sample.code = line['code']
-        sample.save()
+    # If we do not have a file, it's a "pre-loaded" batch
+    if len(request.FILES):
+        samples = request.FILES['samples']
+        import csv,io
+        samples.seek(0)
+        lines = csv.DictReader(io.StringIO(samples.read().decode('utf-8')))
+        for line in lines:
+            sample = Sample()
+            sample.batch = batch
+            sample.code = line['code']
+            sample.save()
+    else:
+        batch.preloaded = False
+        batch.save()
     messages.success(request,
                      _('Batch {0} with {1} samples uploaded successfully').format(
                        batch.identifier,len(batch.sample_set.all())))
