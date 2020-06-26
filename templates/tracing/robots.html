@@ -18,11 +18,27 @@ $Id: $
     </div>
     <div class="panel panel-primary col-md-6">
       <div class="panel-heading">
-        <h3>{% trans "Controls" %}</h3>
+        <h3>
+          {% trans "Controls" %}
+          <span id="refreshstatus"></span>
+        </h3>
       </div>
       <div class="panel-body">
-        <a href="upload" class="btn btn-success">{% trans "Upload sample batch" %}</a>
-        <a href="history" class="btn btn-success flush-right">{% trans "View logs" %}</a>
+        <a href="upload" class="btn btn-success">
+          {% trans "Upload sample batch" %}
+        </a>
+        <a href="history" class="btn btn-success flush-right">
+          {% trans "View logs" %}
+        </a>
+        {% if refresh %}
+        <a href="stop" class="btn btn-danger flush-right">
+          {% trans "Stop receiving" %}
+        </a>
+        {% else %}
+        <a href="start" class="btn btn-info flush-right">
+          {% trans "Start receiving" %}
+        </a>
+        {% endif %}
       </div>
     </div>
     <div class="panel panel-primary col-md-12">
@@ -48,6 +64,9 @@ $Id: $
         <div class="panel panel-primary col-md-6">
            <div class="panel-heading">
              {{ robot }}
+             <button class="btn btn-default flush-right">
+                {{ robot.get_state_display }}
+             </button>
            </div>
            <div class="panel-body">
              <table class="table table-hoverable table-responsive">
@@ -55,61 +74,51 @@ $Id: $
                <tr>
                  <td id="R4" class='col-md-2' 
                      style="text-align: center; background-color: lime">&nbsp;
-                   {% for rack in racks %}
-                     {% if rack.position == 4 %}
-                       <a href="move/{{ rack.id }}" class="btn btn-success">
-                         {{rack.position }}:{{ rack.shortIdent }}</a>
-                     {% else %}
-                       &nbsp;
-                     {% endif %}
-                   {% endfor %}
+                   {% for rack in racks %} {% if rack.position == 4 %}
+                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                     {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
+                   </a>
+                   {% else %} &nbsp;
+                   {% endif %} {% endfor %}
                  </td>
                  <td id="R5" class='col-md-2' 
                      style="text-align: center; background-color: cyan">&nbsp;
-                   {% for rack in racks %}
-                     {% if rack.position == 5 %}
-                       <a href="move/{{ rack.id }}" class="btn btn-default">
-                         {{rack.position }}:{{ rack.shortIdent }}</a>
-                     {% else %}
-                       &nbsp;
-                     {% endif %}
-                   {% endfor %}
+                   {% for rack in racks %} {% if rack.position == 5 %}
+                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                     {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
+                   </a>
+                   {% else %} &nbsp;
+                   {% endif %} {% endfor %}
                  </td>
                  <td id="R6" class='col-md-2' 
                      style="text-align: center; background-color: yellow">&nbsp;
-                   {% for rack in racks %}
-                     {% if rack.position == 6 %}
-                       <a href="move/{{ rack.id }}" class="btn btn-error">
-                         {{rack.position }}:{{ rack.shortIdent }}</a>
-                     {% else %}
-                       &nbsp;
-                     {% endif %}
-                   {% endfor %}
+                   {% for rack in racks %} {% if rack.position == 6 %}
+                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                     {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
+                   </a>
+                   {% else %} &nbsp;
+                   {% endif %} {% endfor %}
                  </td>
                </tr>
                <tr>
                  <td id="R1" class='col-md-2' 
                      style="text-align: center; background-color: orange">&nbsp;
-                   {% for rack in racks %}
-                     {% if rack.position == 1 %}
-                       <a href="move/{{ rack.id }}" class="btn btn-warning">
-                         {{rack.position }}:{{ rack.shortIdent }}</a>
-                     {% else %}
-                       &nbsp;
-                     {% endif %}
-                   {% endfor %}
+                   {% for rack in racks %} {% if rack.position == 1 %}
+                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                     {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
+                   </a>
+                   {% else %} &nbsp;
+                   {% endif %} {% endfor %}
                  </td>
                  <td id="R2">&nbsp;</td>
                  <td id="R3" class='col-md-2' 
                      style="text-align: center; background-color: blue">&nbsp;
-                   {% for rack in racks %}
-                     {% if rack.position == 3 %}
-                       <a href="move/{{ rack.id }}" class="btn btn-info">
-                         {{rack.position }}:{{ rack.shortIdent }}</a>
-                     {% else %}
-                       &nbsp;
-                     {% endif %}
-                   {% endfor %}
+                   {% for rack in racks %} {% if rack.position == 3 %}
+                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                     {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
+                   </a>
+                   {% else %} &nbsp;
+                   {% endif %} {% endfor %}
                  </td>
                </tr>
              {% endwith %}
@@ -144,6 +153,9 @@ $Id: $
         <div class="panel panel-primary col-md-6">
            <div class="panel-heading">
              {{ robot }}
+             <button class="btn btn-default flush-right">
+                {{ robot.get_state_display }}
+             </button>
            </div>
            <div class="panel-body">
              <table class="table table-hoverable table-responsive">
@@ -151,61 +163,51 @@ $Id: $
                <tr>
                  <td id="R4" class='col-md-2' 
                      style="text-align: center; background-color: cyan">&nbsp;
-                   {% for rack in racks %}
-                     {% if rack.position == 4 %}
-                       <a href="move/{{ rack.id }}" class="btn btn-default">
-                         {{rack.position }}:{{ rack.shortIdent }}</a>
-                     {% else %}
-                       &nbsp;
-                     {% endif %}
-                   {% endfor %}
+                   {% for rack in racks %} {% if rack.position == 4 %}
+                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                     {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
+                   </a>
+                   {% else %} &nbsp;
+                   {% endif %} {% endfor %}
                  </td>
                  <td id="R5" class='col-md-2' 
                      style="text-align: center; background-color: white">&nbsp;
-                   {% for rack in racks %}
-                     {% if rack.position == 5 %}
-                       <a href="move/{{ rack.id }}" class="btn btn-default">
-                         {{rack.position }}:{{ rack.shortIdent }}</a>
-                     {% else %}
-                       &nbsp;
-                     {% endif %}
-                   {% endfor %}
+                   {% for rack in racks %} {% if rack.position == 5 %}
+                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                     {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
+                   </a>
+                   {% else %} &nbsp;
+                   {% endif %} {% endfor %}
                  </td>
                  <td id="R6" class='col-md-2' 
                      style="text-align: center; background-color: white">&nbsp;
-                   {% for rack in racks %}
-                     {% if rack.position == 6 %}
-                       <a href="move/{{ rack.id }}" class="btn btn-default">
-                         {{rack.position }}:{{ rack.shortIdent }}</a>
-                     {% else %}
-                       &nbsp;
-                     {% endif %}
-                   {% endfor %}
+                   {% for rack in racks %} {% if rack.position == 6 %}
+                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                     {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
+                   </a>
+                   {% else %} &nbsp;
+                   {% endif %} {% endfor %}
                  </td>
                </tr>
                <tr>
                  <td id="R1" class='col-md-2' 
                      style="text-align: center; background-color: magenta">&nbsp;
-                   {% for rack in racks %}
-                     {% if rack.position == 1 %}
-                       <a href="move/{{ rack.id }}" class="btn btn-default">
-                         {{rack.position }}:{{ rack.shortIdent }}</a>
-                     {% else %}
-                       &nbsp;
-                     {% endif %}
-                   {% endfor %}
+                   {% for rack in racks %} {% if rack.position == 1 %}
+                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                     {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
+                   </a>
+                   {% else %} &nbsp;
+                   {% endif %} {% endfor %}
                  </td>
                  <td id="R2">&nbsp;</td>
                  <td id="R3" class='col-md-2' 
                      style="text-align: center; background-color: white">&nbsp;
-                   {% for rack in racks %}
-                     {% if rack.position == 3 %}
-                       <a href="move/{{ rack.id }}" class="btn btn-default">
-                         {{rack.position }}:{{ rack.shortIdent }}</a>
-                     {% else %}
-                       &nbsp;
-                     {% endif %}
-                   {% endfor %}
+                   {% for rack in racks %} {% if rack.position == 3 %}
+                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                     {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
+                   </a>
+                   {% else %} &nbsp;
+                   {% endif %} {% endfor %}
                  </td>
                </tr>
              {% endwith %}
@@ -240,6 +242,9 @@ $Id: $
         <div class="panel panel-primary col-md-6">
            <div class="panel-heading">
              {{ robot }}
+             <button class="btn btn-default flush-right">
+                {{ robot.get_state_display }}
+             </button>
            </div>
            <div class="panel-body">
              <table class="table table-hoverable table-responsive">
@@ -247,61 +252,51 @@ $Id: $
                <tr>
                  <td id="R4" class='col-md-2' 
                      style="text-align: center; background-color: magenta">&nbsp;
-                   {% for rack in racks %}
-                     {% if rack.position == 4 %}
-                       <a href="move/{{ rack.id }}" class="btn btn-default">
-                         {{rack.position }}:{{ rack.shortIdent }}</a>
-                     {% else %}
-                       &nbsp;
-                     {% endif %}
-                   {% endfor %}
+                   {% for rack in racks %} {% if rack.position == 4 %}
+                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                     {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
+                   </a>
+                   {% else %} &nbsp;
+                   {% endif %} {% endfor %}
                  </td>
                  <td id="R5" class='col-md-2' 
                      style="text-align: center; background-color: white">&nbsp;
-                   {% for rack in racks %}
-                     {% if rack.position == 5 %}
-                       <a href="move/{{ rack.id }}" class="btn btn-default">
-                         {{rack.position }}:{{ rack.shortIdent }}</a>
-                     {% else %}
-                       &nbsp;
-                     {% endif %}
-                   {% endfor %}
+                   {% for rack in racks %} {% if rack.position == 5 %}
+                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                     {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
+                   </a>
+                   {% else %} &nbsp;
+                   {% endif %} {% endfor %}
                  </td>
                  <td id="R6" class='col-md-2' 
                      style="text-align: center; background-color: white">&nbsp;
-                   {% for rack in racks %}
-                     {% if rack.position == 6 %}
-                       <a href="move/{{ rack.id }}" class="btn btn-default">
-                         {{rack.position }}:{{ rack.shortIdent }}</a>
-                     {% else %}
-                       &nbsp;
-                     {% endif %}
-                   {% endfor %}
+                   {% for rack in racks %} {% if rack.position == 6 %}
+                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                     {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
+                   </a>
+                   {% else %} &nbsp;
+                   {% endif %} {% endfor %}
                  </td>
                </tr>
                <tr>
                  <td id="R1" class='col-md-2' 
                      style="text-align: center; background-color: green">&nbsp;
-                   {% for rack in racks %}
-                     {% if rack.position == 1 %}
-                       <a href="move/{{ rack.id }}" class="btn btn-default">
-                         {{rack.position }}:{{ rack.shortIdent }}</a>
-                     {% else %}
-                       &nbsp;
-                     {% endif %}
-                   {% endfor %}
+                   {% for rack in racks %} {% if rack.position == 1 %}
+                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                     {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
+                   </a>
+                   {% else %} &nbsp;
+                   {% endif %} {% endfor %}
                  </td>
                  <td id="R2">&nbsp;</td>
                  <td id="R3" class='col-md-2' 
                      style="text-align: center; background-color: white">&nbsp;
-                   {% for rack in racks %}
-                     {% if rack.position == 3 %}
-                       <a href="move/{{ rack.id }}" class="btn btn-default">
-                         {{rack.position }}:{{ rack.shortIdent }}</a>
-                     {% else %}
-                       &nbsp;
-                     {% endif %}
-                   {% endfor %}
+                   {% for rack in racks %} {% if rack.position == 3 %}
+                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                     {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
+                   </a>
+                   {% else %} &nbsp;
+                   {% endif %} {% endfor %}
                  </td>
                </tr>
              {% endwith %}
@@ -311,4 +306,15 @@ $Id: $
         {% endfor %}
       </div>
     </div>
+{% if refresh %}
+<script>
+$(document).ready(function () {
+  $('#refreshstatus').html('Waiting {{ refresh }}s ...');
+  setTimeout(function(){
+    location.reload(true);
+    $('#refreshstatus').html('Refreshing...');
+  }, {{ refresh }}*1000);
+});
+</script>
+{% endif %}
     {% endblock %}

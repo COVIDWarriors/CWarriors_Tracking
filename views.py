@@ -6,6 +6,8 @@ from django.http import HttpResponseRedirect,JsonResponse
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
 from .forms import loadBatch
@@ -13,10 +15,18 @@ from .forms import loadBatch
 import datetime
 
 # Auxiliary methods
-def place(tube,rack):
+def place(tube,rack,position=None):
     """
     Places a tube in the next free position of a rack
     """
+
+    if not position == None:
+        # We are placing he tube at a given position
+        tube.rack = rack
+        tube.row = position[0]
+        tube.col = position[1]
+        tube.save()
+        return True
 
     # Find the next empty position
     rows = rack.listRows()
@@ -60,35 +70,26 @@ def index(request):
     """
     Initial view to represent the robots state.
     """
+    # No refresh until processing starts on a connected robot
+    refresh = False
+    if request.session.get('tracing_atwork',False):
+        refresh = settings.TRACING_REFRESH
+
     # Prepare the presentation of the robots for the template
-    # It is easier to fill information here in a dicitionary,
-    # than on the template
-    astations = []
     astations = Robot.objects.filter(station='A')
-    #for robot in Robot.objects.filter(station='A'):
-    #    tray = {}
-    #    for rack in robot.rack_set.all():
-    #        tray[rack.position] = rack
-    #    tray['robot'] = robot
-    #    astations.append(tray)
-
-    bstations = []
     bstations = Robot.objects.filter(station='B')
-    #for robot in Robot.objects.filter(station='B'):
-    #    tray = {}
-    #    for rack in robot.rack_set.all():
-    #        tray[rack.position] = rack
-    #    tray['robot'] = robot
-    #    bstations.append(tray)
-
-    cstations = []
     cstations = Robot.objects.filter(station='C')
-    #for robot in Robot.objects.filter(station='C'):
-    #    tray = {}
-    #    for rack in robot.rack_set.all():
-    #        tray[rack.position] = rack
-    #    tray['robot'] = robot
-    #    cstations.append(tray)
+    for robot in astations | bstations | cstations:
+        if (robot.connected and 
+                            len(robot.rack_set.all()) == 0 and
+                            not robot.state == 'E'):
+            robot.state = 'E'
+            robot.save()
+        if (robot.connected and 
+                            len(robot.rack_set.all()) >= 2 and
+                            not robot.state in 'IPF'):
+            robot.state = 'I'
+            robot.save()
 
     # Prepare the list of racks that are outside the robots
     forA = [r for r in Rack.objects.filter(robot=None,passed='') 
@@ -108,6 +109,7 @@ def index(request):
                                                  'bstations': bstations,
                                                  'cstations': cstations,
                                                  'racktypes': Rack.TYPE,
+                                                 'refresh': refresh,
                                                  'forA': forA, 'forB': forB,
                                                  'forC': forC, 'freeA': freeA,
                                                  'freeB': freeB, 'freeC': freeC})
@@ -439,4 +441,77 @@ def upload(request):
                      _('Batch {0} with {1} samples uploaded successfully').format(
                        batch.identifier,len(batch.sample_set.all())))
     return HttpResponseRedirect(reverse('tracing:inicio'))
+
+
+@csrf_exempt
+def moveSample(request):
+    """
+    Moves a sample as instructed by the robot where it is really hapening.
+    The movement data arrives as a JSON object in the request body like:
+    {'source': {'tray': 1, 'row': 'A', 'col': 1}, 
+     'destination': {'tray': 2, 'row': 'A', 'col': 1}}
+    """
+
+    # We are expecting a POST request, any other type is an error
+    if not request.method == 'POST':
+       return HttpResponse("Bad method",status=400,content_type="text/plain") 
+    # We first verify that the request comes from one of our robots
+    # They MUST (RFC 2119) be directly connected to the server
+    remoteip = request.META.get('REMOTE_ADDR')
+    robot = get_object_or_404(Robot,ip=remoteip)
+    if robot.state == 'E':
+        return HttpResponse("Robot is empty",status=400,content_type="text/plain") 
+    data = json.loads(request.body)
+    # Get source rack
+    rackO = get_object_or_404(Rack,robot=robot,
+                                   position=data['source']['tray'])
+    # Get moving tube, acually tubes do not move, but this was first ry code
+    tube = get_object_or_404(Tube,rack=rackO,
+                                  row=data['source']['row'],
+                                  col=data['source']['col'])
+    # Get destination rack
+    rackD = get_object_or_404(Rack,robot=robot,
+                                   position=data['destination']['tray'])
+
+    # Do the move
+    place(tube,rackD,(data['destination']['row'],data['destination']['col']))
+
+    # Let's mark robot as processing
+    if robot.state == 'I':
+        robot.state = 'P'
+        robot.save()
+
+    # If input racks are empty, processing has finished
+    if robot.state == 'P':
+        if robot.station == 'A':
+            finished = True
+            for r in Rack.objects.filter(robot=robot,position__in=[1,3,4,6]):
+                finished = finished and r.isEmpty()
+        if robot.station in 'BC':
+            r = Rack.objects.get(robot=robot,position=1)
+            finished = r.isEmpty()
+        if finished:
+            robot.state = 'F'
+            robot.save()
+
+    return HttpResponse("OK",status=200,content_type="text/plain") 
+    
+
+def start(request):
+    """
+    Starts refreshing the robot display, waiting for movements
+    """
+    request.session['tracing_atwork'] = True
+    return HttpResponseRedirect(reverse('tracing:inicio'))
+
+
+def stop(request):
+    """
+    Stops refreshing the robot display and waiting for movements
+    """
+    # Safewarding, just in case
+    if request.session.get('tracing_atwork',False):
+        del (request.session['tracing_atwork'])
+    return HttpResponseRedirect(reverse('tracing:inicio'))
+
 

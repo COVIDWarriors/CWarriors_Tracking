@@ -10,16 +10,21 @@ import time,datetime,uuid
 # Create your models here.
 class Robot(models.Model):
     TYPES = [('A','A'),('B','B'),('C','C')]
+    STATES = [('I','Iddle'),('F','Finished'),('E','Empty'),
+              ('P','Processing'),('D','Not connected')]
     identifier = models.CharField(verbose_name=_('identifier'),
                                   max_length=32, blank=True, null=True,
                                   db_index=True, editable=True)
     station = models.CharField(max_length=1,verbose_name=_('Station'),
                                db_index=True,choices=TYPES)
-    order = models.IntegerField(verbose_name=_('Station order'),db_index=True,default=1)
+    order = models.IntegerField(verbose_name=_('Station order'),
+                                db_index=True,default=1)
     ip = models.GenericIPAddressField(verbose_name=_('IP address'),
                                       max_length=255, unique=True)
     connected = models.BooleanField(verbose_name=_('Can communicate with server'),
                                     default=True,db_index=True, editable=True)
+    state = models.CharField(max_length=1,verbose_name=_('State'),default='D',
+                             db_index=True,choices=STATES)
 
     # Control information
     createdOn = models.DateTimeField(_('Created on'),auto_now_add=True,
@@ -39,6 +44,12 @@ class Robot(models.Model):
     def save(self, *args, **kwargs):
         if not self.identifier or self.identifier.strip() == '':
             self.identifier = uuid.uuid4().hex
+        # Update state
+        if len(self.rack_set.all()) == 0: self.state = 'E' # Empty
+        if not len(self.rack_set.all()) == 0 and not self.state in 'FP':
+            self.state = 'I' # Iddle
+        # If the robot is not connected, states cannot change
+        if not self.connected: self.state = 'D'
         super(Robot, self).save()
 
 
@@ -199,7 +210,7 @@ class Tray(models.Model):
 
 class Rack(models.Model):
     TYPE = [(1,'4x1'),(2,'4x2'),(3,'4x4'),(4,'4x6'),(5,'Deepwell'),
-            (6,'Extraction Plate'),(7,'PCR Plate')]
+            (6,_('Extraction Plate')),(7,_('PCR Plate'))]
     DEEPWELL = 5
     EP = 6
     PCR = 7
@@ -213,7 +224,7 @@ class Rack(models.Model):
                                    choices=TYPE,db_index=True)
     position = models.IntegerField(choices=POSITION,db_index=True,default=0)
     robot = models.ForeignKey(Robot,null=True,blank=True)
-    finished = models.BooleanField(verbose_name=_('Processong completed'),
+    finished = models.BooleanField(verbose_name=_('Processing completed'),
                                    default=False,db_index=True)
     passed = models.CharField(verbose_name=_('Steps'), max_length=3,
                               blank=True, default='', db_index=True)
@@ -234,7 +245,7 @@ class Rack(models.Model):
 
 
     def isEmpty(self):
-        # An enmpty rack has no tubes :-)
+        # An empty rack has no tubes :-)
         return len(self.tube_set.all()) == 0
 
 
