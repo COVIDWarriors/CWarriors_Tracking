@@ -221,7 +221,7 @@ msgstr "Terminado"
 
 #: tracing/templates/tracing/robots.html:11
 msgid "Create new rack"
-msgstr "Crar un rack"
+msgstr "Crear un rack"
 
 #: tracing/templates/tracing/robots.html:21
 msgid "Controls"

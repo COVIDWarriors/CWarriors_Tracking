@@ -104,13 +104,13 @@ def index(request):
     freeB = [x for x in Robot.objects.filter(station='B') if x.libre()]
     freeC = [x for x in Robot.objects.filter(station='C') if x.libre()]
 
-    return render(request,'robots.html',{'astations': astations,
-                                         'bstations': bstations,
-                                         'cstations': cstations,
-                                         'racktypes': Rack.TYPE,
-                                         'forA': forA, 'forB': forB,
-                                         'forC': forC, 'freeA': freeA,
-                                         'freeB': freeB, 'freeC': freeC})
+    return render(request,'tracing/robots.html',{'astations': astations,
+                                                 'bstations': bstations,
+                                                 'cstations': cstations,
+                                                 'racktypes': Rack.TYPE,
+                                                 'forA': forA, 'forB': forB,
+                                                 'forC': forC, 'freeA': freeA,
+                                                 'freeB': freeB, 'freeC': freeC})
 
 
 def move(request,rackid,robotid=None):
@@ -353,7 +353,8 @@ def fill(request,rackid=None,racktype=None):
     # Fill the grid for presenting on the template
     grid = populate(rack)
 
-    return render(request,'rack_fill.html',{'rack': rack, 'grid': grid, 'batch': batch})
+    return render(request,'tracing/rack_fill.html',
+                  {'rack': rack, 'grid': grid, 'batch': batch})
 
 
 def viewsample(request,sampleid):
@@ -361,7 +362,7 @@ def viewsample(request,sampleid):
     Show sample information
     """
     sample = get_object_or_404(Sample,code=sampleid)
-    return render(request,'sample.html',{'sample': sample })
+    return render(request,'tracing/sample.html',{'sample': sample })
 
 
 def show(request,rackid):
@@ -371,7 +372,7 @@ def show(request,rackid):
     rack = get_object_or_404(Rack,id=rackid)
     # Fill the grid for presenting on the template
     grid = populate(rack)
-    return render(request,'rack.html',{'rack': rack, 'grid': grid })
+    return render(request,'tracing/rack.html',{'rack': rack, 'grid': grid })
 
 
 def history(request):
@@ -391,7 +392,8 @@ def history(request):
         batch = get_object_or_404(Batch,identifier=batchid)
         logs = logs.filter(rack__batch=batch)
 
-    return render(request,'logs.html',{'logs': logs, 'date': date, 'batchid': batchid})
+    return render(request,'tracing/logs.html',
+                  {'logs': logs, 'date': date, 'batchid': batchid})
 
 
 def upload(request):
@@ -404,14 +406,14 @@ def upload(request):
     """
     if request.method == 'GET':
         form = loadBatch()
-        return render(request,'upload.html',{'form': form})
+        return render(request,'tracing/upload.html',{'form': form})
     if not request.method == 'POST':
       messages.error(_('Wrong method'))
       return HttpResponseRedirect(reverse('tracing:inicio'))
 
     form = loadBatch(request.POST, request.FILES)
     if not form.is_valid():
-        return render(request,'upload.html',{'form': form})
+        return render(request,'tracing/upload.html',{'form': form})
 
     batch = Batch()
     if form.cleaned_data['batchid']:
