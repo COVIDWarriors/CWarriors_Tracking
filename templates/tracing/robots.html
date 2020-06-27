@@ -308,13 +308,25 @@ $Id: $
     </div>
 {% if refresh %}
 <script>
-$(document).ready(function () {
-  $('#refreshstatus').html('Waiting {{ refresh }}s ...');
-  setTimeout(function(){
-    location.reload(true);
-    $('#refreshstatus').html('Refreshing...');
-  }, {{ refresh }}*1000);
-});
+//$(document).ready(function () {
+  $('#refreshstatus').html('Waiting <span id="countdown">{{ refresh }}</span>s ...');
+  function initcount(endtime) {
+    function countdown() {
+      $('#countdown').html('contando');
+      var t = Date.parse(endtime) - Date.parse(new Date());
+      if ( t <= 0 ) { 
+        location.reload(true);
+        clearInterval(interval);
+        $('#refreshstatus').html('Refreshing...');
+      };
+      $('#countdown').html(t / 1000);
+    };
+    countdown();
+    var interval = setInterval(countdown, 1000);
+  };
+  var deadline = new Date(Date.parse(new Date()) + {{ refresh }}*1000);
+  initcount(deadline);
+// });
 </script>
 {% endif %}
     {% endblock %}
