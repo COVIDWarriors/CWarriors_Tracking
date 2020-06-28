@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-28 17:52+0200\n"
+"POT-Creation-Date: 2020-06-28 20:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -143,7 +143,7 @@ msgstr ""
 msgid "Processig completed"
 msgstr ""
 
-#: tracing/models.py:155 tracing/templates/tracing/sample.html:1
+#: tracing/models.py:155 tracing/templates/tracing/sample.html:2
 msgid "Result"
 msgstr ""
 

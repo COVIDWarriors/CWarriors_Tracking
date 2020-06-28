@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tracing 0.9\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-28 17:52+0200\n"
+"POT-Creation-Date: 2020-06-28 20:05+0200\n"
 "PO-Revision-Date: 2020-06-28 18:02+0200\n"
 "Last-Translator: Victoriano Giralt <victoriano@uma.es>\n"
 "Language-Team: COVIDWarriors\n"
@@ -143,7 +143,7 @@ msgstr "Código de la muestra"
 msgid "Processig completed"
 msgstr "Proceso completado"
 
-#: tracing/models.py:155 tracing/templates/tracing/sample.html:1
+#: tracing/models.py:155 tracing/templates/tracing/sample.html:2
 msgid "Result"
 msgstr "Resultado"
 
@@ -370,4 +370,3 @@ msgstr "Método incorrecto"
 #, python-brace-format
 msgid "Batch {0} with {1} samples uploaded successfully"
 msgstr "Cargado el lote {0} con {1} muestras"
-

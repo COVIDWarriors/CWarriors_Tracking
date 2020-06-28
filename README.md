@@ -31,6 +31,26 @@ This code simulates the movement of racks with samples through robotic liquid ha
 6. If your protocols have calls to communicate movements to the tracing application (using HTTP requests), you can start the "refresh process" that will anotate sample moves and change robot states accordingly. If there is no communication of real moves, removing the racks from the robot representations will move the samples to the "exit" rack.
 
 --------------
+# Code for sending moves from the robots
+
+If you want to send teal moves from your robots to the tracing server, you have to add Python requests to your protocols and send lists of moves to the server. 
+
+The movements on the list MUST (RFC2119) be dictionaries like:
+      ```python
+      {'source': {'tray': 1, 'row': 'A', 'col': 1}, 
+       'destination': {'tray': 2, 'row': 'A', 'col': 1}}
+      ```
+Then, append each movement like above to a list and send to the server using requests.post, like
+
+   ```python
+   response=requests.post('http://serverip/path/tracing/movesample',json=data)
+   ```
+
+_serverip_ is your server IP address or name (Django has to be operational at that IP or name.
+_path_ is the path where your Django project is installed
+_data_ is the list of movement dictionaries (it may be just one movement)
+
+--------------
 # Acknowledgements
 
 This code has been developed using the knowledge shared by:
