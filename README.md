@@ -16,9 +16,9 @@ This code simulates the movement of racks with samples through robotic liquid ha
 - Add a refresh interval for displaying the robot page while waiting for updates form the real hardware in setings as TRACING_REFRESH in seconds.
 - Add the application to the project urls.py with
 
-      ```python
-      url(r'^tracing/', include('tracing.urls')),
-      ```
+   ```python
+   url(r'^tracing/', include('tracing.urls')),
+   ```
 
 - Finally, _makemigrations_ and _migrate_
 
@@ -39,10 +39,10 @@ If you want to send teal moves from your robots to the tracing server, you have 
 
 The movements on the list MUST (RFC2119) be dictionaries like:
 
-      ```python
-      {'source': {'tray': 1, 'row': 'A', 'col': 1}, 
-       'destination': {'tray': 2, 'row': 'A', 'col': 1}}
-      ```
+   ```python
+   {'source': {'tray': 1, 'row': 'A', 'col': 1}, 
+   'destination': {'tray': 2, 'row': 'A', 'col': 1}}
+   ```
 
 Then, append each movement like above to a list and send to the server using requests.post, like
 
