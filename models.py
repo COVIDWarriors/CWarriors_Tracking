@@ -10,8 +10,8 @@ import time,datetime,uuid
 # Create your models here.
 class Robot(models.Model):
     TYPES = [('A','A'),('B','B'),('C','C')]
-    STATES = [('I','Iddle'),('F','Finished'),('E','Empty'),
-              ('P','Processing'),('D','Not connected')]
+    STATES = [('I',_('Iddle')),('F',_('Finished')),('E',_('Empty')),
+              ('P',_('Processing')),('D',_('Not connected'))]
     identifier = models.CharField(verbose_name=_('identifier'),
                                   max_length=32, blank=True, null=True,
                                   db_index=True, editable=True)

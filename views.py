@@ -2,7 +2,7 @@
 # vim:ts=4:expandtab:ai
 # $Id: $
 from django.shortcuts import render,get_object_or_404
-from django.http import HttpResponseRedirect,JsonResponse
+from django.http import HttpResponse,HttpResponseRedirect,JsonResponse
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages
@@ -453,7 +453,8 @@ def upload(request):
 def moveSample(request):
     """
     Moves a sample as instructed by the robot where it is really hapening.
-    The movement data arrives as a JSON object in the request body like:
+    The movement data arrives as a JSON in the request body as a sequence
+    of objects like:
     {'source': {'tray': 1, 'row': 'A', 'col': 1}, 
      'destination': {'tray': 2, 'row': 'A', 'col': 1}}
     """
@@ -466,21 +467,29 @@ def moveSample(request):
     remoteip = request.META.get('REMOTE_ADDR')
     robot = get_object_or_404(Robot,ip=remoteip)
     if robot.state == 'E':
-        return HttpResponse("Robot is empty",status=400,content_type="text/plain") 
-    data = json.loads(request.body)
-    # Get source rack
-    rackO = get_object_or_404(Rack,robot=robot,
-                                   position=data['source']['tray'])
-    # Get moving tube, acually tubes do not move, but this was first ry code
-    tube = get_object_or_404(Tube,rack=rackO,
-                                  row=data['source']['row'],
-                                  col=data['source']['col'])
-    # Get destination rack
-    rackD = get_object_or_404(Rack,robot=robot,
-                                   position=data['destination']['tray'])
+        return HttpResponse("Robot is empty",
+                            status=400,content_type="text/plain") 
+    import json
+    datalist = json.loads(request.body)
+    if type(datalist) == dict:
+        # We have received only on movement object, we need a list
+        datalist = [datalist]
+    for data in datalist:
+        # Get source rack
+        rackO = get_object_or_404(Rack,robot=robot,
+                                       position=data['source']['tray'])
+        # Get moving tube, acually tubes do not move,
+        # but this was first try code, it will be fixed a some point in time
+        tube = get_object_or_404(Tube,rack=rackO,
+                                      row=data['source']['row'],
+                                      col=data['source']['col'])
+        # Get destination rack
+        rackD = get_object_or_404(Rack,robot=robot,
+                                       position=data['destination']['tray'])
 
-    # Do the move
-    place(tube,rackD,(data['destination']['row'],data['destination']['col']))
+        # Do the move
+        place(tube,rackD,(data['destination']['row'],
+                          data['destination']['col']))
 
     # Let's mark robot as processing
     if robot.state == 'I':
