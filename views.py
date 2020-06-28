@@ -317,6 +317,8 @@ def fill(request,rackid=None,racktype=None):
     """
     Creates an empty rack and presents a page to fill it.
     """
+    # This is a place holder for pending batches, no useless hits of the database
+    pending = []
     # If method is GET, we need a new rack or want to display one
     if request.method == 'GET':
         if not rackid and not racktype:
@@ -341,6 +343,10 @@ def fill(request,rackid=None,racktype=None):
                 batch = get_object_or_404(Batch,identifier=batchid)
             else:
                 batch = None
+
+    # Find batches with unprocessed samples
+    pending = Batch.objects.filter(finished=None)
+
     if rackid and request.method == 'POST':
         # POSTs set the Batch ID for the samples that will fill the racks
         batchid = request.POST.get('batchid',False)
@@ -356,7 +362,7 @@ def fill(request,rackid=None,racktype=None):
     grid = populate(rack)
 
     return render(request,'tracing/rack_fill.html',
-                  {'rack': rack, 'grid': grid, 'batch': batch})
+                  {'rack': rack, 'grid': grid, 'batch': batch, 'pending': pending})
 
 
 def viewsample(request,sampleid):

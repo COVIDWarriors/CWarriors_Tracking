@@ -124,6 +124,12 @@ class Batch(models.Model):
                                                    self.technician)
 
 
+    def numSamples(self):
+        # Number of processed and total samples
+        return '{}/{}'.format(len(self.sample_set.filter(finished=True)),
+                              len(self.sample_set.all()))
+
+
     def save(self, *args, **kwargs):
         if not self.identifier or self.identifier.strip() == '':
             self.identifier = uuid.uuid4().hex

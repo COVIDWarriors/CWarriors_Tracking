@@ -24,18 +24,20 @@ $Id: $
         </h3>
       </div>
       <div class="panel-body">
-        <a href="upload" class="btn btn-success">
+        <a href="upload" class="btn btn-success col-md-3 flush-left">
           {% trans "Upload sample batch" %}
         </a>
-        <a href="history" class="btn btn-success flush-right">
+        <span class="col-md-1"></span>
+        <a href="history" class="btn btn-success col-md-2 flush-right">
           {% trans "View logs" %}
         </a>
+        <span class="col-md-1"></span>
         {% if refresh %}
-        <a href="stop" class="btn btn-danger flush-right">
+        <a href="stop" class="btn btn-danger col-md-2 flush-right">
           {% trans "Stop receiving" %}
         </a>
         {% else %}
-        <a href="start" class="btn btn-info flush-right">
+        <a href="start" class="btn btn-info col-md-2 flush-right">
           {% trans "Start receiving" %}
         </a>
         {% endif %}
@@ -63,10 +65,12 @@ $Id: $
         {% for robot in astations %}
         <div class="panel panel-primary col-md-6">
            <div class="panel-heading">
-             {{ robot }}
-             <button class="btn btn-default flush-right">
-                {{ robot.get_state_display }}
-             </button>
+             <div class="row">
+               <h4 class="col-md-9">{{ robot }}</h4>
+               <button class="btn btn-default col-md-2 flush-right">
+                  {{ robot.get_state_display }}
+               </button>
+             </div>
            </div>
            <div class="panel-body">
              <table class="table table-hoverable table-responsive">
@@ -152,10 +156,12 @@ $Id: $
         {% for robot in bstations %}
         <div class="panel panel-primary col-md-6">
            <div class="panel-heading">
-             {{ robot }}
-             <button class="btn btn-default flush-right">
-                {{ robot.get_state_display }}
-             </button>
+             <div class="row">
+               <h4 class="col-md-9">{{ robot }}</h4>
+               <button class="btn btn-default col-md-2 flush-right">
+                  {{ robot.get_state_display }}
+               </button>
+             </div>
            </div>
            <div class="panel-body">
              <table class="table table-hoverable table-responsive">
@@ -241,10 +247,12 @@ $Id: $
         {% for robot in cstations %}
         <div class="panel panel-primary col-md-6">
            <div class="panel-heading">
-             {{ robot }}
-             <button class="btn btn-default flush-right">
-                {{ robot.get_state_display }}
-             </button>
+             <div class="row">
+               <h4 class="col-md-9">{{ robot }}</h4>
+               <button class="btn btn-default col-md-2 flush-right">
+                  {{ robot.get_state_display }}
+               </button>
+             </div>
            </div>
            <div class="panel-body">
              <table class="table table-hoverable table-responsive">
@@ -308,7 +316,7 @@ $Id: $
     </div>
 {% if refresh %}
 <script>
-//$(document).ready(function () {
+$(document).ready(function () {
   $('#refreshstatus').html('Waiting <span id="countdown">{{ refresh }}</span>s ...');
   function initcount(endtime) {
     function countdown() {
@@ -326,7 +334,8 @@ $Id: $
   };
   var deadline = new Date(Date.parse(new Date()) + {{ refresh }}*1000);
   initcount(deadline);
-// });
+});
 </script>
 {% endif %}
+
     {% endblock %}

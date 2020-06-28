@@ -14,8 +14,18 @@ $Id: $
         <div class="col-md-5">
           <form id="batchform" method="POST">
            {% csrf_token %}
-           {% trans "Batch" %}<input name="batchid" 
-                                     id="batchid" value="{{batch.identifier}}">
+           {% trans "Batch" %}
+           <select name="batchid" id="batchid">
+             <option value=""></option>
+             {% for b in pending %}
+             <option value="{{b.identifier}}" 
+              {% if batch.identifier == b.identifier %} selected {% endif %}>
+              {{b.identifier}}({{b.numSamples}})
+             </option>
+             {% endfor %}
+           </select>
+           <input type="Submit" class="btn btn-success"
+                  value="{% trans "Select batch" %}">
           </form>
         </div>
         <div class="col-md-5">
@@ -46,7 +56,7 @@ $Id: $
         });
     });
 </script>
-      {% include "rack.html" %}
+      {% include "tracing/rack.html" %}
       </div>
     </div>
     {% endblock %}
