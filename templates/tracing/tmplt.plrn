@@ -1,0 +1,15 @@
+Plate Header,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Field,Data,,Instructions,,,,,,,,,,,,,,,,,,,,,,,,,,
+Version,1,,Do not modify this field.,,,,,,,,,,,,,,,,,,,,,,,,,,
+Plate Size,96,,Do not modify this field.,,,,,,,,,,,,,,,,,,,,,,,,,,
+Plate Type,BR White,,Allowed values (BR White BR Clear),,,,,,,,,,,,,,,,,,,,,,,,,,
+Scan Mode,All Channels,,Allowed values (SYBR/FAM Only All Channels FRET),,,,,,,,,,,,,,,,,,,,,,,,,,
+Units,micromoles,,Allowed values (copy number fold dilution micromoles nanomoles picomoles femtomoles attomoles milligrams micrograms nanograms picograms femtograms attograms percent),,,,,,,,,,,,,,,,,,,,,,,,,,
+Run ID,,,Short description or bar code with no new line or commas,,,,,,,,,,,,,,,,,,,,,,,,,,
+Run Notes,"'runNoteVersion':('1.1'),'plateBarcode':(''),'plateType':('Plate Bio-Rad White'),'capFilm':('FILM'),'ExtractBarcode':(''),'PCRBarcodeList':('{{batches|join:"|"}}'),'PatientNameList':('','','','','','','','','','','','','','','','','',''),'userId':(''),'userName':(''),'ClotSampleWell':(),'dwpBarcode':('')",,Run description with no new line or commas,,,,,,,,,,,,,,,,,,,,,,,,,,
+Run Protocol,C:\Seegene\Protocol\Allplex 2019-nCoV.prcl,,Protocol File Name,,,,,,,,,,,,,,,,,,,,,,,,,,
+Data File,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+TBD,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Plate Data,,Do not modify this field.,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Well,Ch1 Dye,Ch2 Dye,Ch3 Dye,Ch4 Dye,Ch5 Dye,FRET,Sample Type,Sample Name,Ch1 Target Name,Ch2 Target Name,Ch3 Target Name,Ch4 Target Name,Ch5 Target Name,FRET Target Name,Biological Set Name,Replicate,Ch1 Quantity,Ch2 Quantity,Ch3 Quantity,Ch4 Quantity,Ch5 Quantity,FRET Quantity,Well Note,Ch1 Well Color,Ch2 Well Color,Ch3 Well Color,Ch4 Well Color,Ch5 Well Color,FRET Well Color{% for t in tubes %}
+{{t.row}}{{t.col|stringformat:"02d"}},FAM,HEX,Cal Red 610,Quasar 670,,,Unknown,"{{t.sample.code}}",,,,,,1_1_0,,,,,,,,,2019-nCoV,,,,,,{%endfor%}
