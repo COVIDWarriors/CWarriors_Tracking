@@ -131,6 +131,14 @@ def move(request,rackid,robotid=None):
                 and robot.rack_set.filter(position=5)):
                 messages.error(request,_('Deepwell MUST be removed first'))
                 return HttpResponseRedirect(reverse('tracing:inicio'))
+            # We may remove non empty racks and send them back to the queue
+            if (not rack.racktype == rack.DEEPWELL and not rack.isEmpty()):
+                # The rack has not passed through robot A
+                rack.passed = ''
+                rack.robot =  None
+                rack.save()
+                # Its like the rack was never on the robot, go back quick
+                return HttpResponseRedirect(reverse('tracing:inicio'))
             # Deepwells must leave station A with all samples in them
             # if there is any
             if (rack.racktype == rack.DEEPWELL and rack.isEmpty()):
@@ -156,7 +164,7 @@ def move(request,rackid,robotid=None):
                     for tube in source[0].tube_set.all().order_by('col','row'):
                         place(tube,destination[0])
                 else:
-                    messages.error(request,_('Unexpeted error while moving'))
+                    messages.error(request,_('Unexpected error while moving'))
                     return HttpResponseRedirect(reverse('tracing:inicio'))
         # Behaviour for station C
         if robot.station == 'C':
@@ -339,10 +347,11 @@ def fill(request,rackid=None,racktype=None):
             # We want a given rack to display and fill
             rack = get_object_or_404(Rack,id=rackid)
             batchid = request.session.get('batch',0)
+            batch = None
             if batchid:
-                batch = get_object_or_404(Batch,identifier=batchid)
-            else:
-                batch = None
+                batches = Batch.objects.filter(identifier=batchid)
+                if len(batches) == 1:
+                   batch = batches[0] 
 
     # Find batches with unprocessed samples
     pending = Batch.objects.filter(finished=None)
@@ -363,6 +372,18 @@ def fill(request,rackid=None,racktype=None):
 
     return render(request,'tracing/rack_fill.html',
                   {'rack': rack, 'grid': grid, 'batch': batch, 'pending': pending})
+
+
+def empty(request,rackid):
+    """
+    Removes all samples from a rack
+    """
+    rack = get_object_or_404(Rack,id=rackid)
+    for tube in rack.tube_set.all():
+        tube.sample = None
+        tube.delete()
+    return HttpResponseRedirect(reverse('tracing:fill',
+                                        kwargs={'rackid': rack.id}))
 
 
 def viewsample(request,sampleid):
@@ -389,7 +410,13 @@ def history(request):
     By default, it shows the activity of the current day.
     """
     batchid = False
-    lastdate = Log.objects.first().createdOn.date()
+    dates = [l.createdOn.date() for l in Log.objects.all()]
+    lastdate = dates[0]
+    dates = list(set(dates))
+    if len(dates)>60: dates = dates[:60]
+    dates.sort()
+    dates.reverse()
+    batches = Batch.objects.filter(createdOn__date__in=dates)
     if request.method == 'GET':
        date = lastdate
     if request.method == 'POST':
@@ -397,11 +424,14 @@ def history(request):
         batchid = request.POST.get('batchid',False)
     logs = Log.objects.filter(createdOn__date=date)
     if batchid:
-        batch = get_object_or_404(Batch,identifier=batchid)
-        logs = logs.filter(rack__batch=batch)
+        batch = get_object_or_404(Batch,id=batchid)
+        racks = [ s.tube_set.first().rack for s in batch.sample_set.all()
+                                          if s.tube_set.first()]
+        logs = logs.filter(rack__in=racks)
 
     return render(request,'tracing/logs.html',
-                  {'logs': logs, 'date': date, 'batchid': batchid})
+                  {'logs': logs, 'batchid': batchid, 'batches': batches,
+                   'date': date, 'dates': dates})
 
 
 def upload(request):
@@ -528,5 +558,32 @@ def stop(request):
     if request.session.get('tracing_atwork',False):
         del (request.session['tracing_atwork'])
     return HttpResponseRedirect(reverse('tracing:inicio'))
+
+def download(request,rackid):
+    """
+    Generates a 'CSV' file for the Thermo
+    """
+
+    rack = get_object_or_404(Rack,id=rackid)
+    tubes = rack.tube_set.all()
+    batches = []
+    for s in [t.sample for t in tubes]:
+        if s.batch.identifier not in batches:
+            batches.append(s.batch.identifier)
+    data = render(request,'tracing/tmplt.plrn',{'batches':batches,'tubes':tubes})
+    response = HttpResponse(data,content_type='application/csv')
+    filename = 'plrn,_{}_.plrn'.format(datetime.datetime.now().isoformat())
+    response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
+    return response
+
+
+def printrack(request,rackid):
+    """
+    Presents a rack for printing
+    """
+    rack = get_object_or_404(Rack,id=rackid)
+    # Fill the grid for presenting on the template
+    grid = populate(rack)
+    return render(request,'tracing/fullrack.html',{'rack': rack, 'grid': grid })
 
 

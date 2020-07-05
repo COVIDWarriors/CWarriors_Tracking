@@ -23,7 +23,8 @@ $Id: $
     <div class="panel panel-primary col-md-12">
       <div class="panel-heading">
         <h2>
-          Logs for {%if batchid %} {{ batchid }} on {% endif %}
+          {% trans "Logs for" %}
+          {%if batchid %} {{ batchid }} {% trans "on" %} {% endif %}
           {{ date|date:"Y-n-j" }}
         </h2>
       </div>
@@ -32,11 +33,24 @@ $Id: $
           <form id="batchform" method="POST">
            {% csrf_token %}
            {% trans "Date" %}
-           <input name="date" id="date"
-                  value="{{ date|date:"Y-n-j" }}">
+           <select name="date" id="date">
+             {% for d in dates %}
+             <option value="{{ d|date:"Y-n-j" }}" 
+                {%if date == d%} selected {%endif%}>
+              {{ d|date:"Y-n-j" }}
+             </option>
+             {% endfor %}
+           </select>
            {% trans "Batch" %}
-           <input name="batchid" id="batchid"
-                  value="{% if batchid %}{{ batchid }}{% endif %}">
+           <select name="batchid" id="batchid">
+             <option value="">----</option>
+             {% for b in batches %}
+             <option value="{{b.id}}"
+               {% if b.id == batchid %} selected {% endif %}>
+               {{b.identifier}}
+             </option>
+             {% endfor %}
+           </select>
            <input type="Submit" value="{% trans "Filter" %}">
           </form>
         </div>
@@ -47,6 +61,7 @@ $Id: $
     </div>
     <div class="panel-group" id="accordion">
     {% for log in logs %}
+      {% if viewall or log.rack.numSamples %}
       <div class="panel panel-info">
         <div class="panel-heading">
           <h3>
@@ -60,6 +75,16 @@ $Id: $
             {{log.rack.get_racktype_display}}
             {{log.rack.identifier}} ({{log.rack.numSamples}})
             {{log.get_what_display}} {{log.robot}}
+            {% if log.rack.numSamples %}
+            <a href="{% url 'tracing:download' log.rack.id %}" 
+               type="button" class="btn btn-default">
+              {% trans "Download" %}
+            </a>
+            <a href="{% url 'tracing:print' log.rack.id %}" 
+               type="button" class="btn btn-default">
+              {% trans "Print rack" %}
+            </a>
+            {% endif %}
           </h3>
         </div>
         <div id="Nodo{{log.id}}" class="panel-collapse collapse">
@@ -76,6 +101,13 @@ $Id: $
           $('#N{{log.id}}').attr('class','glyphicon glyphicon-chevron-down')
         });
       </script>
+      {% endif %}
+    {% empty %}
+      <h1>
+        {% trans "No logs for" %}
+        {%if batchid %} {{ batchid }} {% trans "on" %} {% endif %}
+        {{ date|date:"Y-n-j" }}
+      </h1>
     {% endfor %}
     </div>
     {% endblock %}

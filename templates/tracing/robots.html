@@ -51,9 +51,9 @@ $Id: $
         <div class="col-md-10">
         {% for rack in forA %}
           <div class="btn-group">
-            <button class="btn btn-default">
+            <a href="{% url "tracing:fill" rack.id %}" class="btn btn-default">
               {{ rack }} {% trans "place into" %}
-            </button>
+            </a>
             {% for robot in freeA %}
             <a href="move/{{rack.id}}/{{robot.id}}" class="btn btn-default">
               {{ robot.station }}{{ robot.order }}

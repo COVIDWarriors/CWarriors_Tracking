@@ -11,7 +11,7 @@ $Id: $
         <h3>{{ rack.identifier }} {{ rack.get_racktype_display }}</h3>
       </div>
       <div class="panel-body">
-        <div class="col-md-5">
+        <div class="col-md-4">
           <form id="batchform" method="POST">
            {% csrf_token %}
            {% trans "Batch" %}
@@ -28,11 +28,16 @@ $Id: $
                   value="{% trans "Select batch" %}">
           </form>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-4">
          <form id="sampleform" method="POST" action="insert/{{rack.id}}">
            {% csrf_token %}
-            {% trans "Sample" %}<input name="identifier" id="identifier">
+            {% trans "Sample" %} <input name="identifier" id="identifier">
           </form>
+        </div>
+        <div class="col-md-2">
+          <a href="{% url "tracing:empty" rack.id %}" class="btn btn-default">
+            {% trans "Empty rack" %}
+          </a>
         </div>
         <div class="col-md-2">
           <a href=".." class="btn btn-success">{% trans "Finished" %}</a>

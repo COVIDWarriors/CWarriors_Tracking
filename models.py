@@ -215,11 +215,11 @@ class Tray(models.Model):
 
 
 class Rack(models.Model):
-    TYPE = [(1,'4x1'),(2,'4x2'),(3,'4x4'),(4,'4x6'),(5,'Deepwell'),
-            (6,_('Extraction Plate')),(7,_('PCR Plate'))]
     DEEPWELL = 5
     EP = 6
     PCR = 7
+    TYPE = [(4,'4x6'),(5,_('Deepwell')),
+            (6,_('Extraction Plate')),(7,_('PCR Plate'))]
     POSITION = [(1,'1'),(2,'2'),(3,'3'),(4,'4'),(5,'5'),(6,'6')]
     ROWCOLS = {1:('D',1),2:('D',2),3:('D',4),4:('D',6),5:('H',12),
                6:('H',12),7:('H',12)} 
