@@ -126,11 +126,6 @@ def move(request,rackid,robotid=None):
         robot = rack.robot
         # Behaviour for station A
         if robot.station == 'A':
-            # Deepwells MUST leave station A first, they are always on tray 5
-            if (not rack.racktype == rack.DEEPWELL
-                and robot.rack_set.filter(position=5)):
-                messages.error(request,_('Deepwell MUST be removed first'))
-                return HttpResponseRedirect(reverse('tracing:inicio'))
             # We may remove non empty racks and send them back to the queue
             if (not rack.racktype == rack.DEEPWELL and not rack.isEmpty()):
                 # The rack has not passed through robot A

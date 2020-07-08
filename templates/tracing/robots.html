@@ -88,7 +88,8 @@ $Id: $
                  <td id="R5" class='col-md-2' 
                      style="text-align: center; background-color: cyan">&nbsp;
                    {% for rack in racks %} {% if rack.position == 5 %}
-                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                   <a href="move/{{ rack.id }}"
+                      class="confirm btn btn-default">
                      {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
                    </a>
                    {% else %} &nbsp;
@@ -170,7 +171,8 @@ $Id: $
                  <td id="R4" class='col-md-2' 
                      style="text-align: center; background-color: cyan">&nbsp;
                    {% for rack in racks %} {% if rack.position == 4 %}
-                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                   <a href="move/{{ rack.id }}"
+                      class="confirm btn btn-default">
                      {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
                    </a>
                    {% else %} &nbsp;
@@ -179,7 +181,8 @@ $Id: $
                  <td id="R5" class='col-md-2' 
                      style="text-align: center; background-color: white">&nbsp;
                    {% for rack in racks %} {% if rack.position == 5 %}
-                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                   <a href="move/{{ rack.id }}"
+                      class="confirm btn btn-default">
                      {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
                    </a>
                    {% else %} &nbsp;
@@ -188,7 +191,8 @@ $Id: $
                  <td id="R6" class='col-md-2' 
                      style="text-align: center; background-color: white">&nbsp;
                    {% for rack in racks %} {% if rack.position == 6 %}
-                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                   <a href="move/{{ rack.id }}"
+                      class="confirm btn btn-default">
                      {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
                    </a>
                    {% else %} &nbsp;
@@ -199,7 +203,8 @@ $Id: $
                  <td id="R1" class='col-md-2' 
                      style="text-align: center; background-color: magenta">&nbsp;
                    {% for rack in racks %} {% if rack.position == 1 %}
-                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                   <a href="move/{{ rack.id }}"
+                      class="confirm btn btn-default">
                      {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
                    </a>
                    {% else %} &nbsp;
@@ -209,7 +214,8 @@ $Id: $
                  <td id="R3" class='col-md-2' 
                      style="text-align: center; background-color: white">&nbsp;
                    {% for rack in racks %} {% if rack.position == 3 %}
-                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                   <a href="move/{{ rack.id }}"
+                      class="confirm btn btn-default">
                      {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
                    </a>
                    {% else %} &nbsp;
@@ -261,7 +267,8 @@ $Id: $
                  <td id="R4" class='col-md-2' 
                      style="text-align: center; background-color: magenta">&nbsp;
                    {% for rack in racks %} {% if rack.position == 4 %}
-                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                   <a href="move/{{ rack.id }}"
+                      class="confirm btn btn-default">
                      {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
                    </a>
                    {% else %} &nbsp;
@@ -270,7 +277,8 @@ $Id: $
                  <td id="R5" class='col-md-2' 
                      style="text-align: center; background-color: white">&nbsp;
                    {% for rack in racks %} {% if rack.position == 5 %}
-                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                   <a href="move/{{ rack.id }}"
+                      class="confirm btn btn-default">
                      {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
                    </a>
                    {% else %} &nbsp;
@@ -279,7 +287,8 @@ $Id: $
                  <td id="R6" class='col-md-2' 
                      style="text-align: center; background-color: white">&nbsp;
                    {% for rack in racks %} {% if rack.position == 6 %}
-                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                   <a href="move/{{ rack.id }}"
+                      class="confirm btn btn-default">
                      {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
                    </a>
                    {% else %} &nbsp;
@@ -290,7 +299,8 @@ $Id: $
                  <td id="R1" class='col-md-2' 
                      style="text-align: center; background-color: green">&nbsp;
                    {% for rack in racks %} {% if rack.position == 1 %}
-                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                   <a href="move/{{ rack.id }}"
+                      class="confirm btn btn-default">
                      {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
                    </a>
                    {% else %} &nbsp;
@@ -300,7 +310,8 @@ $Id: $
                  <td id="R3" class='col-md-2' 
                      style="text-align: center; background-color: white">&nbsp;
                    {% for rack in racks %} {% if rack.position == 3 %}
-                   <a href="move/{{ rack.id }}" class="btn btn-default">
+                   <a href="move/{{ rack.id }}"
+                      class="confirm btn btn-default">
                      {{rack.position}}:{{rack.shortIdent}}({{rack.numSamples}})
                    </a>
                    {% else %} &nbsp;
@@ -334,6 +345,13 @@ $(document).ready(function () {
   };
   var deadline = new Date(Date.parse(new Date()) + {{ refresh }}*1000);
   initcount(deadline);
+});
+</script>
+{% else %}
+<script>
+// Require confirmation for links marked with class "confirm"
+$('.confirm').on('click', function () {
+   return confirm('{% trans "Removing the rack will simulate processing. Are you sure?" %}');
 });
 </script>
 {% endif %}
