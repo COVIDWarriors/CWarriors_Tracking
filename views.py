@@ -180,7 +180,7 @@ def move(request,rackid,robotid=None):
                         tube.sample.finished = True
                         tube.sample.save()
                 else:
-                    messages.error(request,_('Unexpeted error while moving'))
+                    messages.error(request,_('Unexpected error while moving'))
                     return HttpResponseRedirect(reverse('tracing:inicio'))
         # Common behaviour for outgoing racks
         messages.success(request,_('{0} removed from {1}').format(rack,robot))
