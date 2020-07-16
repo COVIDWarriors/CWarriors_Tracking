@@ -451,8 +451,9 @@ def upload(request):
     batch = Batch()
     if form.cleaned_data['batchid']:
         batch.identifier = form.cleaned_data['batchid']
-    batch.technician = get_object_or_404(Technician,
-                                         id=form.cleaned_data['techid'])
+    batch.technician = form.cleaned_data['techid']
+    if form.cleaned_data['procedure']:
+        batch.identifier = form.cleaned_data['procedure']
     batch.save()
     # If we do not have a file, it's a "pre-loaded" batch
     if len(request.FILES):
@@ -562,10 +563,15 @@ def download(request,rackid):
     rack = get_object_or_404(Rack,id=rackid)
     tubes = rack.tube_set.all()
     batches = []
+    procedure = None
     for s in [t.sample for t in tubes]:
+        if not procedure and s.batch.procedure:
+            procedure = s.batch.procedure
         if s.batch.identifier not in batches:
             batches.append(s.batch.identifier)
-    data = render(request,'tracing/tmplt.plrn',{'batches':batches,'tubes':tubes})
+    data = render(request,'tracing/tmplt.plrn',{'batches':batches,
+                                                'p':procedure,
+                                                'tubes':tubes})
     response = HttpResponse(data,content_type='application/csv')
     filename = 'plrn,_{}_.plrn'.format(datetime.datetime.now().isoformat())
     response['Content-Disposition'] = 'attachment; filename={}'.format(filename)

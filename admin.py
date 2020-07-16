@@ -44,6 +44,19 @@ class TechnicianAdmin(admin.ModelAdmin):
 admin.site.register(Technician,TechnicianAdmin)
 
 
+class ProcedureAdmin(admin.ModelAdmin):
+    model = Procedure
+    list_display = ['id','name']
+    list_display_links = ['id','name']
+    fieldsets = (
+        (None, {'fields': ('name','path',),},),
+        (_('Dyes'), {'fields': ('f1','f2','f3','f4','f5',),},),
+    )
+
+
+admin.site.register(Procedure,ProcedureAdmin)
+
+
 class SampleAdmin(admin.TabularInline):
     model = Sample
     extra = 1
@@ -53,12 +66,13 @@ class SampleAdmin(admin.TabularInline):
 class BatchAdmin(admin.ModelAdmin):
     model = Batch
     inlines = [SampleAdmin]
-    list_display = ['id','identifier','technician','started','finished']
-    list_filter = ['technician','started','finished']
-    list_editable = ['technician']
+    list_display = ['id','identifier','technician','procedure',
+                    'started','finished']
+    list_filter = ['technician','procedure','started','finished']
+    list_editable = ['technician','procedure']
     list_display_links = ['id','identifier']
     fieldsets = (
-        (None, {'fields': ('technician','started','finished',),},),
+        (None, {'fields': ('technician','procedure','started','finished',),},),
     )
 
 admin.site.register(Batch,BatchAdmin)

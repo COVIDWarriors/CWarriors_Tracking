@@ -13,3 +13,5 @@ class loadBatch(forms.Form):
     samples = forms.FileField(label=_('Samples file'),required=False)
     techid = forms.ModelChoiceField(queryset=Technician.objects.all(),
                                     label=_('Technician'),initial=0)
+    procedure = forms.ModelChoiceField(queryset=Procedure.objects.all(),
+                                       label=_('Procedure'),initial=0)

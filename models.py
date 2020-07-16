@@ -93,12 +93,51 @@ class Technician(models.Model):
     pass
 
 
+class Procedure(models.Model):
+    """
+    Basic model to accomodate thermocycler options for Can Ruti
+    """
+    name = models.CharField(verbose_name=_('name'),
+                            max_length=50, db_index=True)
+    f1 = models.CharField(verbose_name=_('first fluorophore'),
+                          max_length = 20, blank=True, null=True)
+    f2 = models.CharField(verbose_name=_('second fluorophore'),
+                          max_length = 20, blank=True, null=True)
+    f3 = models.CharField(verbose_name=_('third fluorophore'),
+                          max_length = 20, blank=True, null=True)
+    f4 = models.CharField(verbose_name=_('fourth fluorophore'),
+                          max_length = 20, blank=True, null=True)
+    f5 = models.CharField(verbose_name=_('fith fluorophore'),
+                          max_length = 20, blank=True, null=True)
+    path = models.CharField(verbose_name=_('path'),
+                            max_length = 200, blank=True, null=True)
+
+
+    # Control information
+    createdOn = models.DateTimeField(_('Created on'),auto_now_add=True,
+                                     db_index=True,editable=False)
+    modifiedOn = models.DateTimeField(_('Modified on'),auto_now=True,
+                                      db_index=True,editable=False)
+
+
+    class Meta:
+        verbose_name = _('Procedure')
+        verbose_name_plural = _('Procedures')
+        ordering = ['name']
+
+
+    def __str__(self):
+        return self.name
+
+
 class Batch(models.Model):
     identifier = models.CharField(verbose_name=_('identifier'),
                                   max_length=32, blank=True, null=True,
                                   db_index=True, editable=False)
     technician = models.ForeignKey(Technician)
-    preloaded = models.BooleanField(verbose_name=_('Pre-loaded batch'),default=True)
+    procedure = models.ForeignKey(Procedure,blank=True, null=True)
+    preloaded = models.BooleanField(verbose_name=_('Pre-loaded batch'),
+                                    default=True)
     started = models.DateTimeField(_('Processing started on'),
                                    db_index=True,null=True,blank=True)
     finished = models.DateTimeField(_('Processing completed on'),
