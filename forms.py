@@ -5,7 +5,7 @@
 from django.utils.translation import ugettext_lazy as _
 
 from django import forms
-from .models import Technician
+from .models import Technician, Procedure
 
 class loadBatch(forms.Form):
     batchid = forms.CharField(max_length=32,required=False,
@@ -14,4 +14,5 @@ class loadBatch(forms.Form):
     techid = forms.ModelChoiceField(queryset=Technician.objects.all(),
                                     label=_('Technician'),initial=0)
     procedure = forms.ModelChoiceField(queryset=Procedure.objects.all(),
+                                       required=False,
                                        label=_('Procedure'),initial=0)

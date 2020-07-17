@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tracing 0.9\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-12 19:26+0200\n"
+"POT-Creation-Date: 2020-07-17 00:38+0200\n"
 "PO-Revision-Date: 2020-06-28 18:02+0200\n"
 "Last-Translator: Victoriano Giralt <victoriano@uma.es>\n"
 "Language-Team: COVIDWarriors\n"
@@ -17,17 +17,25 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Virtaal 0.7.1\n"
 
-#: tracing/forms.py:17
+#: tracing/admin.py:54
+msgid "Dyes"
+msgstr "Colorantes"
+
+#: tracing/forms.py:12
 msgid "Batch identifier (leave blank to generate)"
 msgstr "Identificador de lote (en blanco para generarlo)"
 
-#: tracing/forms.py:18
+#: tracing/forms.py:13
 msgid "Samples file"
 msgstr "Archivo de muestras"
 
-#: tracing/forms.py:20
+#: tracing/forms.py:15
 msgid "Technician"
 msgstr "Operador"
+
+#: tracing/forms.py:17 tracing/models.py:124
+msgid "Procedure"
+msgstr "Química"
 
 #: tracing/models.py:13
 msgid "Iddle"
@@ -49,9 +57,9 @@ msgstr "Procesando"
 msgid "Not connected"
 msgstr "Sin conexión"
 
-#: tracing/models.py:15 tracing/models.py:67 tracing/models.py:97
-#: tracing/models.py:148 tracing/models.py:187 tracing/models.py:226
-#: tracing/models.py:340 tracing/models.py:391
+#: tracing/models.py:15 tracing/models.py:67 tracing/models.py:134
+#: tracing/models.py:187 tracing/models.py:226 tracing/models.py:265
+#: tracing/models.py:379 tracing/models.py:430
 msgid "identifier"
 msgstr "identificador"
 
@@ -75,15 +83,15 @@ msgstr "Puede comunicar con el servidor"
 msgid "State"
 msgstr "Estado"
 
-#: tracing/models.py:30 tracing/models.py:73 tracing/models.py:109
-#: tracing/models.py:163 tracing/models.py:193 tracing/models.py:239
-#: tracing/models.py:351 tracing/models.py:400
+#: tracing/models.py:30 tracing/models.py:73 tracing/models.py:117
+#: tracing/models.py:148 tracing/models.py:202 tracing/models.py:232
+#: tracing/models.py:278 tracing/models.py:390 tracing/models.py:439
 msgid "Created on"
 msgstr "Creado el"
 
-#: tracing/models.py:32 tracing/models.py:75 tracing/models.py:111
-#: tracing/models.py:165 tracing/models.py:195 tracing/models.py:241
-#: tracing/models.py:353 tracing/models.py:402
+#: tracing/models.py:32 tracing/models.py:75 tracing/models.py:119
+#: tracing/models.py:150 tracing/models.py:204 tracing/models.py:234
+#: tracing/models.py:280 tracing/models.py:392 tracing/models.py:441
 msgid "Modified on"
 msgstr "Modificado el"
 
@@ -91,136 +99,168 @@ msgstr "Modificado el"
 msgid "Name"
 msgstr "Nombre"
 
-#: tracing/models.py:101
+#: tracing/models.py:100
+msgid "name"
+msgstr "nombre"
+
+#: tracing/models.py:102
+msgid "first fluorophore"
+msgstr "primer fluróforo"
+
+#: tracing/models.py:104
+msgid "second fluorophore"
+msgstr "segundo fluróforo"
+
+#: tracing/models.py:106
+msgid "third fluorophore"
+msgstr "tercer fluróforo"
+
+#: tracing/models.py:108
+msgid "fourth fluorophore"
+msgstr "cuarto fluróforo"
+
+#: tracing/models.py:110
+msgid "fith fluorophore"
+msgstr "quinto fluróforo"
+
+#: tracing/models.py:112
+msgid "path"
+msgstr "trayecto"
+
+#: tracing/models.py:125
+msgid "Procedures"
+msgstr "Químicas"
+
+#: tracing/models.py:139
 msgid "Pre-loaded batch"
 msgstr "Lote pre-cargado"
 
-#: tracing/models.py:102
+#: tracing/models.py:141
 msgid "Processing started on"
 msgstr "Proceso iniciado el"
 
-#: tracing/models.py:104
+#: tracing/models.py:143
 msgid "Processing completed on"
 msgstr "Proceso completado el"
 
-#: tracing/models.py:116
+#: tracing/models.py:155
 msgid "Batches"
 msgstr "Lotes"
 
-#: tracing/models.py:121
+#: tracing/models.py:160
 msgid "{} ({}): {} -> {} by {}"
 msgstr "{} ({}): {} -> {} por {}"
 
-#: tracing/models.py:146
+#: tracing/models.py:185
 msgid "No"
 msgstr "No"
 
-#: tracing/models.py:146
+#: tracing/models.py:185
 msgid "Yes"
 msgstr "Sí"
 
-#: tracing/models.py:146
+#: tracing/models.py:185
 msgid "Unclear"
 msgstr "Inespecífico"
 
-#: tracing/models.py:147
+#: tracing/models.py:186
 msgid "Low"
 msgstr "Bajo"
 
-#: tracing/models.py:147
+#: tracing/models.py:186
 msgid "Medium"
 msgstr "Medio"
 
-#: tracing/models.py:147
+#: tracing/models.py:186
 msgid "High"
 msgstr "Alto"
 
-#: tracing/models.py:151
+#: tracing/models.py:190
 msgid "Sample code"
 msgstr "Código de la muestra"
 
-#: tracing/models.py:153
+#: tracing/models.py:192
 msgid "Processig completed"
 msgstr "Proceso completado"
 
-#: tracing/models.py:155 tracing/templates/tracing/sample.html:2
+#: tracing/models.py:194 tracing/templates/tracing/sample.html:2
 msgid "Result"
 msgstr "Resultado"
 
-#: tracing/models.py:157
+#: tracing/models.py:196
 msgid "IgG"
 msgstr "IgG"
 
-#: tracing/models.py:159
+#: tracing/models.py:198
 msgid "IgM"
 msgstr "IgM"
 
-#: tracing/models.py:174
+#: tracing/models.py:213
 #, python-brace-format
 msgid "{0} en {1}"
 msgstr "{0} en {1}"
 
-#: tracing/models.py:221
+#: tracing/models.py:260
 msgid "Deepwell"
 msgstr ""
 
-#: tracing/models.py:222
+#: tracing/models.py:261
 msgid "Extraction Plate"
 msgstr "Placa de extracción"
 
-#: tracing/models.py:222
+#: tracing/models.py:261
 msgid "PCR Plate"
 msgstr "Placa PCR"
 
-#: tracing/models.py:229
+#: tracing/models.py:268
 msgid "Rack type"
 msgstr "Tipo de rack"
 
-#: tracing/models.py:233
+#: tracing/models.py:272
 msgid "Processing completed"
 msgstr "Proceso completado"
 
-#: tracing/models.py:235
+#: tracing/models.py:274
 msgid "Steps"
 msgstr "Pasos"
 
-#: tracing/models.py:280
+#: tracing/models.py:319
 #, python-brace-format
 msgid "{0} with {1} samples in {2} tray {3}"
 msgstr "{0} con {1} muestras en {2} bandeja {3}"
 
-#: tracing/models.py:285
+#: tracing/models.py:324
 #, python-brace-format
 msgid "{0} with {1} samples {2} [{3}]"
 msgstr "{0} con {1} muestras {2} [{3}]"
 
-#: tracing/models.py:296
+#: tracing/models.py:335
 msgid "Only deepwells on tray 5"
 msgstr "En la bandeja 5 solo deepwells"
 
-#: tracing/models.py:298
+#: tracing/models.py:337
 msgid "Deepwells only on tray 5"
 msgstr "Deepwells solo en la bandeja 5"
 
-#: tracing/models.py:368
+#: tracing/models.py:407
 #, python-format
 msgid "Row %d does not exist"
 msgstr "La fila %d no existe"
 
-#: tracing/models.py:371
+#: tracing/models.py:410
 #, python-format
 msgid "Column %d does not exist"
 msgstr "La columna %d no existe"
 
-#: tracing/models.py:390
+#: tracing/models.py:429
 msgid "ENTERS"
 msgstr "ENTRA"
 
-#: tracing/models.py:390
+#: tracing/models.py:429
 msgid "EXITS"
 msgstr "SALE"
 
-#: tracing/models.py:394
+#: tracing/models.py:433
 msgid "In / Out"
 msgstr "Entra / Sale"
 
@@ -327,12 +367,11 @@ msgstr "Estación C"
 msgid "Removing the rack will simulate processing. Are you sure?"
 msgstr "Quitar el rack simulará el proceso. ¿Está seguro?"
 
-#: tracing/templates/tracing/upload.html:43
+#: tracing/templates/tracing/upload.html:50
 msgid "Upload samples"
 msgstr "Cargar muestras"
 
-#: tracing/views.py:162
-#: tracing/views.py:183
+#: tracing/views.py:162 tracing/views.py:183
 msgid "Unexpected error while moving"
 msgstr "Error inesperado al mover muestras"
 
@@ -396,7 +435,7 @@ msgstr "No hay identificador de lote"
 msgid "Wrong method"
 msgstr "Método incorrecto"
 
-#: tracing/views.py:472
+#: tracing/views.py:473
 #, python-brace-format
 msgid "Batch {0} with {1} samples uploaded successfully"
 msgstr "Cargado el lote {0} con {1} muestras"

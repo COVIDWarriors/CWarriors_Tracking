@@ -2,6 +2,7 @@
 # vim:ts=4:expandtab:ai
 # $Id: $
 from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
 
 # Register your models here.
 from .models import *
