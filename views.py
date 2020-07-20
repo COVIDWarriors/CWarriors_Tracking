@@ -406,7 +406,8 @@ def history(request):
     """
     batchid = False
     dates = [l.createdOn.date() for l in Log.objects.all()]
-    lastdate = dates[0]
+    lastdate = datetime.date.today()
+    if len(dates): lastdate = dates[0]
     dates = list(set(dates))
     if len(dates)>60: dates = dates[:60]
     dates.sort()
@@ -453,7 +454,7 @@ def upload(request):
         batch.identifier = form.cleaned_data['batchid']
     batch.technician = form.cleaned_data['techid']
     if form.cleaned_data['procedure']:
-        batch.identifier = form.cleaned_data['procedure']
+        batch.procedure = form.cleaned_data['procedure']
     batch.save()
     # If we do not have a file, it's a "pre-loaded" batch
     if len(request.FILES):
