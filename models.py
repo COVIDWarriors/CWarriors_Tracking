@@ -135,7 +135,7 @@ class Batch(models.Model):
                                   max_length=32, blank=True, null=True,
                                   db_index=True, editable=False)
     technician = models.ForeignKey(Technician)
-    procedure = models.ForeignKey(Procedure,blank=True, null=True)
+    procedure = models.ForeignKey(Procedure, null=True)
     preloaded = models.BooleanField(verbose_name=_('Pre-loaded batch'),
                                     default=True)
     started = models.DateTimeField(_('Processing started on'),
