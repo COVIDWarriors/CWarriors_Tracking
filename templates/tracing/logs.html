@@ -24,8 +24,9 @@ $Id: $
       <div class="panel-heading">
         <h2>
           {% trans "Logs for" %}
-          {%if batchid %} {{ batchid }} {% trans "on" %} {% endif %}
-          {{ date|date:"Y-n-j" }}
+          {%if batchid %} {{ batch.identifier }} {% endif %}
+          {%if batchid and date %} {% trans "on" %} {% endif %}
+          {%if date %} {{ date }} {% endif %}
         </h2>
       </div>
       <div class="panel-body">
@@ -34,9 +35,10 @@ $Id: $
            {% csrf_token %}
            {% trans "Date" %}
            <select name="date" id="date">
+             <option value="">----</option>
              {% for d in dates %}
              <option value="{{ d|date:"Y-n-j" }}" 
-                {%if date == d%} selected {%endif%}>
+                {%if date == d|date:"Y-n-j" %} selected {%endif%}>
               {{ d|date:"Y-n-j" }}
              </option>
              {% endfor %}
@@ -46,9 +48,9 @@ $Id: $
              <option value="">----</option>
              {% for b in batches %}
              <option value="{{b.id}}"
-               {% if b.id == batchid %} selected {% endif %}>
+               {% if b.id == batchid|add:"0" %} selected {% endif %}>
                {{b.identifier}}
-             </option>
+             </option><!--{{batchid}} {{b.id}}-->
              {% endfor %}
            </select>
            <input type="Submit" value="{% trans "Filter" %}">
@@ -105,8 +107,9 @@ $Id: $
     {% empty %}
       <h1>
         {% trans "No logs for" %}
-        {%if batchid %} {{ batchid }} {% trans "on" %} {% endif %}
-        {{ date|date:"Y-n-j" }}
+        {%if batchid %} {{ batch.identifier }} {% endif %}
+        {%if batchid and date %} {% trans "on" %} {% endif %}
+        {%if date %} {{ date }} {% endif %}
       </h1>
     {% endfor %}
     </div>

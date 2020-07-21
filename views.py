@@ -405,6 +405,7 @@ def history(request):
     By default, it shows the activity of the current day.
     """
     batchid = False
+    batch = ''
     dates = [l.createdOn.date() for l in Log.objects.all()]
     lastdate = datetime.date.today()
     if len(dates): lastdate = dates[0]
@@ -416,9 +417,12 @@ def history(request):
     if request.method == 'GET':
        date = lastdate
     if request.method == 'POST':
-        date = request.POST.get('date',lastdate)
+        date = request.POST.get('date',False)
         batchid = request.POST.get('batchid',False)
-    logs = Log.objects.filter(createdOn__date=date)
+    if date:
+        logs = Log.objects.filter(createdOn__date=date)
+    else:
+        logs = Log.objects.all()
     if batchid:
         batch = get_object_or_404(Batch,id=batchid)
         racks = [ s.tube_set.first().rack for s in batch.sample_set.all()
@@ -427,7 +431,7 @@ def history(request):
 
     return render(request,'tracing/logs.html',
                   {'logs': logs, 'batchid': batchid, 'batches': batches,
-                   'date': date, 'dates': dates})
+                   'batch': batch, 'date': date, 'dates': dates})
 
 
 def upload(request):
