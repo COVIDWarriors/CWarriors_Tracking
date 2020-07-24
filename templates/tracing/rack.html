@@ -15,9 +15,9 @@
           <td id="grid{{g.row}}{{g.col}}">
             {% if g.finished %}
             <button class="btn btn-success"
-                    onClick="$('#SampleCode').html('{{g.sample}}');
-                             $('#SampleData').load('{% url "tracing:sample" g.sample %}');
-                             $('#Sample').modal();">
+                onClick="$('#SampleCode').html('{{g.sample}}');
+                         $('#SampleData').load('{% url "tracing:sample" g.id %}');
+                         $('#Sample').modal();">
               {{g.sample}}
             </button>
             {% else %}

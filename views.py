@@ -58,6 +58,7 @@ def populate(rack):
     for t in rack.tube_set.all():
         g = [x for x in grid if x['col'] == t.col and x['row'] == t.row]
         if len(g) == 1:
+          g[0]['id'] = t.sample.id
           g[0]['sample'] = t.sample.code
           g[0]['finished'] = t.sample.finished
 
@@ -385,7 +386,7 @@ def viewsample(request,sampleid):
     """
     Show sample information
     """
-    sample = get_object_or_404(Sample,code=sampleid)
+    sample = get_object_or_404(Sample,id=sampleid)
     return render(request,'tracing/sample.html',{'sample': sample })
 
 
