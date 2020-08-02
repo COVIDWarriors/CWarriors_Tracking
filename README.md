@@ -35,7 +35,7 @@ This code simulates the movement of racks with samples through robotic liquid ha
 --------------
 # Code for sending moves from the robots
 
-If you want to send teal moves from your robots to the tracing server, you have to add Python requests to your protocols and send lists of moves to the server. 
+If you want to send real moves from your robots to the tracing server, you have to add Python requests to your protocols and send lists of moves to the server. 
 
 The movements on the list MUST (RFC2119) be dictionaries like:
 
