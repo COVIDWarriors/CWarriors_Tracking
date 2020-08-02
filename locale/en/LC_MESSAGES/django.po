@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-17 00:38+0200\n"
+"POT-Creation-Date: 2020-08-02 18:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,7 +33,7 @@ msgstr ""
 msgid "Technician"
 msgstr ""
 
-#: tracing/forms.py:17 tracing/models.py:124
+#: tracing/forms.py:18 tracing/models.py:124
 msgid "Procedure"
 msgstr ""
 
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Iddle"
 msgstr ""
 
-#: tracing/models.py:13 tracing/templates/tracing/rack_fill.html:43
+#: tracing/models.py:13 tracing/templates/tracing/rack_fill.html:48
 msgid "Finished"
 msgstr ""
 
@@ -278,37 +278,37 @@ msgstr ""
 msgid "Logs for"
 msgstr ""
 
-#: tracing/templates/tracing/logs.html:27
-#: tracing/templates/tracing/logs.html:108
+#: tracing/templates/tracing/logs.html:28
+#: tracing/templates/tracing/logs.html:111
 msgid "on"
 msgstr ""
 
-#: tracing/templates/tracing/logs.html:35
+#: tracing/templates/tracing/logs.html:36
 msgid "Date"
 msgstr ""
 
-#: tracing/templates/tracing/logs.html:44
+#: tracing/templates/tracing/logs.html:46
 #: tracing/templates/tracing/rack_fill.html:17
 msgid "Batch"
 msgstr ""
 
-#: tracing/templates/tracing/logs.html:54
+#: tracing/templates/tracing/logs.html:56
 msgid "Filter"
 msgstr ""
 
-#: tracing/templates/tracing/logs.html:58
+#: tracing/templates/tracing/logs.html:60
 msgid "Back"
 msgstr ""
 
-#: tracing/templates/tracing/logs.html:81
+#: tracing/templates/tracing/logs.html:83
 msgid "Download"
 msgstr ""
 
-#: tracing/templates/tracing/logs.html:85
+#: tracing/templates/tracing/logs.html:87
 msgid "Print rack"
 msgstr ""
 
-#: tracing/templates/tracing/logs.html:107
+#: tracing/templates/tracing/logs.html:109
 msgid "No logs for"
 msgstr ""
 
@@ -317,6 +317,10 @@ msgid "Select batch"
 msgstr ""
 
 #: tracing/templates/tracing/rack_fill.html:39
+msgid "Edit samples"
+msgstr ""
+
+#: tracing/templates/tracing/rack_fill.html:44
 msgid "Empty rack"
 msgstr ""
 
@@ -371,71 +375,83 @@ msgstr ""
 msgid "Upload samples"
 msgstr ""
 
-#: tracing/views.py:162 tracing/views.py:183
+#: tracing/views.py:163 tracing/views.py:184
 msgid "Unexpected error while moving"
 msgstr ""
 
-#: tracing/views.py:186
+#: tracing/views.py:187
 #, python-brace-format
 msgid "{0} removed from {1}"
 msgstr ""
 
-#: tracing/views.py:199
+#: tracing/views.py:200
 #, python-brace-format
 msgid "Tray 5 on {0} is occupied"
 msgstr ""
 
-#: tracing/views.py:209
+#: tracing/views.py:210
 #, python-brace-format
 msgid "No trays available on {0}"
 msgstr ""
 
-#: tracing/views.py:218 tracing/views.py:234
+#: tracing/views.py:219 tracing/views.py:235
 #, python-brace-format
 msgid "Tray 4 on {0} is occupied"
 msgstr ""
 
-#: tracing/views.py:225 tracing/views.py:241
+#: tracing/views.py:226 tracing/views.py:242
 #, python-brace-format
 msgid "Tray 1 on {0} is occupied"
 msgstr ""
 
-#: tracing/views.py:248
+#: tracing/views.py:249
 #, python-brace-format
 msgid "{0} placed on tray {1} on {2}"
 msgstr ""
 
-#: tracing/views.py:266 tracing/views.py:283
+#: tracing/views.py:267 tracing/views.py:284
 msgid "Wrong Identifier"
 msgstr ""
 
-#: tracing/views.py:272
+#: tracing/views.py:273
 msgid "Rack is full"
 msgstr ""
 
-#: tracing/views.py:279
+#: tracing/views.py:280
 msgid "No Batch selected"
 msgstr ""
 
-#: tracing/views.py:290
+#: tracing/views.py:291
 #, python-brace-format
 msgid "Wrong Sample Code {0}:{1}"
 msgstr ""
 
-#: tracing/views.py:295
+#: tracing/views.py:296
 #, python-brace-format
 msgid "Sample {0} Added Already"
 msgstr ""
 
-#: tracing/views.py:360
+#: tracing/views.py:361
 msgid "No batch identifier"
 msgstr ""
 
-#: tracing/views.py:444
+#: tracing/views.py:401
+msgid "Sample Id Required"
+msgstr ""
+
+#: tracing/views.py:405
+msgid "Sample Identifier Required"
+msgstr ""
+
+#: tracing/views.py:410
+msgid "Wrong Sample Id"
+msgstr ""
+
+#: tracing/views.py:477
 msgid "Wrong method"
 msgstr ""
 
-#: tracing/views.py:473
+#: tracing/views.py:506
 #, python-brace-format
 msgid "Batch {0} with {1} samples uploaded successfully"
 msgstr ""

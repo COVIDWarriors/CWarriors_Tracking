@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tracing 0.9\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-17 00:38+0200\n"
+"POT-Creation-Date: 2020-08-02 18:44+0200\n"
 "PO-Revision-Date: 2020-06-28 18:02+0200\n"
 "Last-Translator: Victoriano Giralt <victoriano@uma.es>\n"
 "Language-Team: COVIDWarriors\n"
@@ -33,7 +33,7 @@ msgstr "Archivo de muestras"
 msgid "Technician"
 msgstr "Operador"
 
-#: tracing/forms.py:17 tracing/models.py:124
+#: tracing/forms.py:18 tracing/models.py:124
 msgid "Procedure"
 msgstr "Química"
 
@@ -41,7 +41,7 @@ msgstr "Química"
 msgid "Iddle"
 msgstr "Parado"
 
-#: tracing/models.py:13 tracing/templates/tracing/rack_fill.html:43
+#: tracing/models.py:13 tracing/templates/tracing/rack_fill.html:48
 msgid "Finished"
 msgstr "Terminado"
 
@@ -202,7 +202,7 @@ msgstr "{0} en {1}"
 
 #: tracing/models.py:260
 msgid "Deepwell"
-msgstr ""
+msgstr "Deepwell"
 
 #: tracing/models.py:261
 msgid "Extraction Plate"
@@ -278,37 +278,37 @@ msgstr "Muestra"
 msgid "Logs for"
 msgstr "Registro para"
 
-#: tracing/templates/tracing/logs.html:27
-#: tracing/templates/tracing/logs.html:108
+#: tracing/templates/tracing/logs.html:28
+#: tracing/templates/tracing/logs.html:111
 msgid "on"
 msgstr "en"
 
-#: tracing/templates/tracing/logs.html:35
+#: tracing/templates/tracing/logs.html:36
 msgid "Date"
 msgstr "Fecha"
 
-#: tracing/templates/tracing/logs.html:44
+#: tracing/templates/tracing/logs.html:46
 #: tracing/templates/tracing/rack_fill.html:17
 msgid "Batch"
 msgstr "Lote"
 
-#: tracing/templates/tracing/logs.html:54
+#: tracing/templates/tracing/logs.html:56
 msgid "Filter"
 msgstr "Filtro"
 
-#: tracing/templates/tracing/logs.html:58
+#: tracing/templates/tracing/logs.html:60
 msgid "Back"
 msgstr "Volver"
 
-#: tracing/templates/tracing/logs.html:81
+#: tracing/templates/tracing/logs.html:83
 msgid "Download"
 msgstr "Descargar"
 
-#: tracing/templates/tracing/logs.html:85
+#: tracing/templates/tracing/logs.html:87
 msgid "Print rack"
 msgstr "Imprimir rack"
 
-#: tracing/templates/tracing/logs.html:107
+#: tracing/templates/tracing/logs.html:109
 msgid "No logs for"
 msgstr "No hay registros para"
 
@@ -317,6 +317,10 @@ msgid "Select batch"
 msgstr "Seleccionar lote"
 
 #: tracing/templates/tracing/rack_fill.html:39
+msgid "Edit samples"
+msgstr "Editar muestras"
+
+#: tracing/templates/tracing/rack_fill.html:44
 msgid "Empty rack"
 msgstr "Rack vacío"
 
@@ -371,71 +375,83 @@ msgstr "Quitar el rack simulará el proceso. ¿Está seguro?"
 msgid "Upload samples"
 msgstr "Cargar muestras"
 
-#: tracing/views.py:162 tracing/views.py:183
+#: tracing/views.py:163 tracing/views.py:184
 msgid "Unexpected error while moving"
 msgstr "Error inesperado al mover muestras"
 
-#: tracing/views.py:186
+#: tracing/views.py:187
 #, python-brace-format
 msgid "{0} removed from {1}"
 msgstr "{0} quitado de {1}"
 
-#: tracing/views.py:199
+#: tracing/views.py:200
 #, python-brace-format
 msgid "Tray 5 on {0} is occupied"
 msgstr "La bandeja 5 de {0} está ocupada"
 
-#: tracing/views.py:209
+#: tracing/views.py:210
 #, python-brace-format
 msgid "No trays available on {0}"
 msgstr "No hay bandejas libres en {0}"
 
-#: tracing/views.py:218 tracing/views.py:234
+#: tracing/views.py:219 tracing/views.py:235
 #, python-brace-format
 msgid "Tray 4 on {0} is occupied"
 msgstr "La bandeja 4 de {0} está ocupada"
 
-#: tracing/views.py:225 tracing/views.py:241
+#: tracing/views.py:226 tracing/views.py:242
 #, python-brace-format
 msgid "Tray 1 on {0} is occupied"
 msgstr "La bandeja 1 de {0} está ocupada"
 
-#: tracing/views.py:248
+#: tracing/views.py:249
 #, python-brace-format
 msgid "{0} placed on tray {1} on {2}"
 msgstr "{0} colocado en la bandeja {1} de {2}"
 
-#: tracing/views.py:266 tracing/views.py:283
+#: tracing/views.py:267 tracing/views.py:284
 msgid "Wrong Identifier"
 msgstr "Identificador incorrecto"
 
-#: tracing/views.py:272
+#: tracing/views.py:273
 msgid "Rack is full"
 msgstr "El rack está lleno"
 
-#: tracing/views.py:279
+#: tracing/views.py:280
 msgid "No Batch selected"
 msgstr "No se ha seleccionado un lote"
 
-#: tracing/views.py:290
+#: tracing/views.py:291
 #, python-brace-format
 msgid "Wrong Sample Code {0}:{1}"
 msgstr "Código de muestra incorrecto {0}:{1}"
 
-#: tracing/views.py:295
+#: tracing/views.py:296
 #, python-brace-format
 msgid "Sample {0} Added Already"
 msgstr "La muestra {0} ya se ha añadido"
 
-#: tracing/views.py:360
+#: tracing/views.py:361
 msgid "No batch identifier"
 msgstr "No hay identificador de lote"
 
-#: tracing/views.py:444
+#: tracing/views.py:401
+msgid "Sample Id Required"
+msgstr "Falta el identificador de muestra"
+
+#: tracing/views.py:405
+msgid "Sample Identifier Required"
+msgstr "Falta el código de muestra"
+
+#: tracing/views.py:410
+msgid "Wrong Sample Id"
+msgstr "Código de muestra incorrecto"
+
+#: tracing/views.py:477
 msgid "Wrong method"
 msgstr "Método incorrecto"
 
-#: tracing/views.py:473
+#: tracing/views.py:506
 #, python-brace-format
 msgid "Batch {0} with {1} samples uploaded successfully"
 msgstr "Cargado el lote {0} con {1} muestras"
