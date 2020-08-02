@@ -10,6 +10,11 @@ And it happened, and it run that day. The first published version has some extra
 This code simulates the movement of racks with samples through robotic liquid handling stations, organised as A, B and C, following the methods required to amplify SARS-CoV2 genetic material for rPCR detection.
 
 --------------
+# Moral pre-requisite
+
+I've invested a sizeable amount of my free time, even denting into my hours of sleep, in order to contribute to the fight against the global pandemic. If you use this code for controling protocols running on Opentrons robots you MUST (RFC 2119) publish your protocols for the global good. I have no way to force anyone to do this except through this paragraph, thus, the moral pre-requisite. Thanks you.
+
+--------------
 # Installation
 
 - Add 'tracing' to the project installed apps in settings.
