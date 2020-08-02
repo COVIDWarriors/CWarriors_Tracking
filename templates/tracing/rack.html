@@ -27,7 +27,8 @@
               <input id="sid{{g.row}}{{g.col}}" name="sid" type="hidden" 
                      class="form-control" value="{{g.id}}">
               <input id="scod{{g.row}}{{g.col}}" name="scod" type="text" 
-                     class="form-control" value="{{g.sample}}">
+                     disabled="disabled"
+                     class="code form-control" value="{{g.sample}}">
             </form>
             <script>
             var frm{{g.row}}{{g.col}} = $("#form{{g.row}}{{g.col}}");
@@ -40,6 +41,7 @@
                   success: function (data) {
                       $('#sid'+data.row+''+data.col).attr('value',data.sampleid);
                       $('#scod'+data.row+''+data.col).attr('value',data.sample);
+                      $('.code').prop('disabled',true);
                       $('#identifier').focus();
                   },
                   error: function (data) {
