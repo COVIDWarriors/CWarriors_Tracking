@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^download/(?P<rackid>\d+)$', views.download, name='download'),
     url(r'^print/(?P<rackid>\d+)$', views.printrack, name='print'),
     url(r'^sample/(?P<sampleid>\d+)$', views.viewsample, name='sample'),
+    url(r'^edsample$', views.editsample, name='edsample'),
     url(r'^movesample$', views.moveSample, name='movesample'),
     url(r'^start$', views.start, name='start'),
     url(r'^stop$', views.stop, name='stop'),

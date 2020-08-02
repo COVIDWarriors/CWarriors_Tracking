@@ -13,15 +13,40 @@
           <td><strong>{{ row }}</strong></td>
           {% for g in cols %}
           <td id="grid{{g.row}}{{g.col}}">
-            {% if g.finished %}
+            {% if rack.passed and g.id %}
             <button class="btn btn-success"
                 onClick="$('#SampleCode').html('{{g.sample}}');
                          $('#SampleData').load('{% url "tracing:sample" g.id %}');
                          $('#Sample').modal();">
               {{g.sample}}
             </button>
-            {% else %}
-            {{g.sample}}
+            {% elif not rack.passed %}
+            <form method="POST" action="{% url "tracing:edsample" %}"
+                  id="form{{g.row}}{{g.col}}">
+              {% csrf_token %}
+              <input id="sid{{g.row}}{{g.col}}" name="sid" type="hidden" 
+                     class="form-control" value="{{g.id}}">
+              <input id="scod{{g.row}}{{g.col}}" name="scod" type="text" 
+                     class="form-control" value="{{g.sample}}">
+            </form>
+            <script>
+            var frm{{g.row}}{{g.col}} = $("#form{{g.row}}{{g.col}}");
+            frm{{g.row}}{{g.col}}.submit(function (e) {
+              e.preventDefault();
+              $.ajax({
+                  type: frm{{g.row}}{{g.col}}.attr('method'),
+                  url: frm{{g.row}}{{g.col}}.attr('action'),
+                  data: frm{{g.row}}{{g.col}}.serialize(),
+                  success: function (data) {
+                      $('#sid'+data.row+''+data.col).attr('value',data.sampleid);
+                      $('#scod'+data.row+''+data.col).attr('value',data.sample);
+                  },
+                  error: function (data) {
+                      alert(data.responseJSON.error);
+                  },
+              });
+            });
+            </script>
             {% endif %}
           </td>
           {% endfor %}

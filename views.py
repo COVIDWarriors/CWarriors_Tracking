@@ -313,8 +313,8 @@ def insert(request,rackid):
         sample[0].batch.started = datetime.datetime.now()
         sample[0].batch.save()
 
-    return JsonResponse({'row': tube.row, 'col': tube.col,
-                         'sampleid': sample[0].code})
+    return JsonResponse({'row': tube.row, 'col': tube.col, 'sampleid': sample[0].id,
+                         'sample': sample[0].code})
 
 
 def fill(request,rackid=None,racktype=None):
@@ -388,6 +388,33 @@ def viewsample(request,sampleid):
     """
     sample = get_object_or_404(Sample,id=sampleid)
     return render(request,'tracing/sample.html',{'sample': sample })
+
+
+def editsample(request):
+    """
+    Change sample code
+    """
+    if request.method == 'POST':
+       sampleid = request.POST.get('sid',None)
+       identifier = request.POST.get('scod',None)
+    if not sampleid:
+        response = JsonResponse({"error": _("Sample Id Required")})
+        response.status_code = 404
+        return response
+    if not identifier:
+        response = JsonResponse({"error": _("Sample Identifier Required")})
+        response.status_code = 404
+        return response
+    samples = Sample.objects.filter(pk=sampleid)
+    if not len(samples) == 1:
+        response = JsonResponse({"error": _("Wrong Sample Id")})
+        response.status_code = 404
+        return response
+    # We have a single sample as expected
+    sample = samples[0]
+    sample.code = identifier
+    sample.save()
+    return JsonResponse({'id': sample.id,'code': sample.code})
 
 
 def show(request,rackid):

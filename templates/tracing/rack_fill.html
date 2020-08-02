@@ -43,17 +43,18 @@ $Id: $
           <a href=".." class="btn btn-success">{% trans "Finished" %}</a>
         </div>
 <script nonce="{{settings.VARIABLE_NONCE_CSP}}" type="text/javascript">
-    var frm = $('#sampleform');
+    var sfrm = $('#sampleform');
 
-    frm.submit(function (e) {
+    sfrm.submit(function (e) {
         e.preventDefault();
         $.ajax({
-            type: frm.attr('method'),
-            url: frm.attr('action'),
-            data: frm.serialize(),
+            type: sfrm.attr('method'),
+            url: sfrm.attr('action'),
+            data: sfrm.serialize(),
             success: function (data) {
                 $('#identifier').val('');
-                $('#grid'+data.row+''+data.col).html(data.sampleid);
+                $('#sid'+data.row+''+data.col).attr('value',data.sampleid);
+                $('#scod'+data.row+''+data.col).attr('value',data.sample);
             },
             error: function (data) {
                 alert(data.responseJSON.error);
