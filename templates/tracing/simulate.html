@@ -1,0 +1,320 @@
+{% extends "tracing/base.html" %}
+{% comment %}
+vim:ts=2:expandtab:ai
+$Id: $
+{% endcomment %}
+{% load i18n %}
+
+    {% block middle %}
+    <div class="panel panel-primary col-md-12">
+      <div class="panel-heading">
+        <h3>{% trans "Robot selection" %}</h3>
+      </div>
+      <div class="panel-body">
+        <form id="robotform" class="form-horizontal"
+              action="{% url 'tracing:simulate' %}" method="POST">
+          {% csrf_token %}
+        <div class="row">
+          <span class="col-md-8 text-center">
+              <select id="robotid" name="robotid" class="form-control">
+                <option value="0"></option>
+                {% for r in robots %}
+                {% if r == robot %}
+                <option selected value="{{r.id}}">{{r}}</option>
+                {% else %}
+                <option value="{{r.id}}">{{r}}</option>
+                {% endif %}
+                {% endfor %}
+              </select>
+          </span>
+          <span class="col-md-2 text-right" class="form-control">
+              <input type="Submit" class="btn btn-info"
+                     value="{% trans "Select robot" %}">
+          </span>
+        </div>
+        </form>
+      </div>
+    </div> <!-- Controls panel ends -->
+    {% if robot %}
+    <div class="panel panel-primary col-md-12">
+      <div class="panel-heading">
+        <h3> {% trans "Movements" %} </h3>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          {% if robot %}
+          <form id="moveform" method="POST" class="form-horizontal"
+                action="{% url 'tracing:simulate' robot.id 'a' %}">
+            {% csrf_token %}
+            <select id="stray" name="stray">
+              <option value=""></option>
+              {% for t in trays %}
+              <option value="{{t}}">{{t}}</option>
+              {% endfor %}
+            </select>:
+            <input type="text" max-length="1" id="srow" name="srow">
+            <input type="text" max-length="2" id="scol" name="scol">
+            =&gt;
+            <select id="dtray" name="dtray">
+              <option value=""></option>
+              {% for t in trays %}
+              <option value="{{t}}">{{t}}</option>
+              {% endfor %}
+            </select>:
+            <input type="text" max-length="1" id="drow" name="drow">
+            <input type="text" max-length="2" id="dcol" name="dcol">
+            <input type="Submit" class="btn btn-info"
+                   value="{% trans "Add move" %}">
+          </form>
+          {% endif %}
+        </div>
+        <div class="row">
+          {% for m in moves %}
+          ({{m.source.tray}}:{{m.source.row}}{{m.source.col}} =&gt;
+          {{m.destination.tray}}:{{m.destination.row}}{{m.destination.col}})
+          {% endfor %}
+          {% if moves %}
+          <a href="{% url 'tracing:simulate' robot.id 'm' %}"
+             class="btn btn-default">
+            {% trans "Send" %}
+          </a>
+          <a href="{% url 'tracing:simulate' robot.id 'c' %}"
+             class="btn btn-default">
+            {% trans "Clear moves" %}
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div> <!-- Movements panel ends -->
+    <div class="panel panel-primary col-md-12">
+      <div class="panel-heading">
+        <div class="row">
+          <div class="col-md-8">
+            <h3>
+              {% trans "Robot View" %}
+            </h3>
+          </div>
+          <div class="col-md-4 text-right">
+            <h3>{{robot.ip}}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="panel panel-primary col-md-4">
+            <div class="panel-heading">
+              <div class="row">
+                <span class="col-md-12" style="text-align: center">
+                  <h3>4</h3>
+                </span>
+              </div>
+            </div>
+            <div class="panel-body">
+              {% if 4 in trays %}
+              <table class="table table-hoverable table-responsive">
+                {% regroup grids.4 by row as row_list %}
+                {% for row, cols in row_list %}
+                {% if forloop.counter == 1 %}
+                <tr>
+                  <th></th>
+                  {% for g in cols %}
+                  <th style="text-align: center">{{forloop.counter}}</th>
+                  {% endfor %}
+                </tr>
+                {% endif %}
+                <tr>
+                   <td><strong>{{ row }}</strong></td>
+                   {% for g in cols %}
+                   <td style="text-align: center;
+                      {% if g.id %}background-color: lime{% endif %}">
+                      {{g.id}}
+                  </td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </table>
+              {% endif %}
+            </div>
+          </div> <!-- Position 4 ends -->
+          <div class="panel panel-primary col-md-4">
+            <div class="panel-heading">
+              <div class="row">
+                <span class="col-md-12" style="text-align: center">
+                  <h3>5</h3>
+                </span>
+              </div>
+            </div>
+            <div class="panel-body">
+              {% if 5 in trays %}
+              <table class="table table-hoverable table-responsive">
+                {% regroup grids.5 by row as row_list %}
+                {% for row, cols in row_list %}
+                {% if forloop.counter == 1 %}
+                <tr>
+                  <th></th>
+                  {% for g in cols %}
+                  <th style="text-align: center">{{forloop.counter}}</th>
+                  {% endfor %}
+                </tr>
+                {% endif %}
+                <tr>
+                   <td><strong>{{ row }}</strong></td>
+                   {% for g in cols %}
+                   <td style="text-align: center;
+                      {% if g.id %}background-color: lime{% endif %}">
+                      {{g.id}}
+                  </td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </table>
+              {% endif %}
+            </div>
+          </div> <!-- Position 5 ends -->
+          <div class="panel panel-primary col-md-4">
+            <div class="panel-heading">
+              <div class="row">
+                <span class="col-md-12" style="text-align: center">
+                  <h3>6</h3>
+                </span>
+              </div>
+            </div>
+            <div class="panel-body">
+              {% if 6 in trays %}
+              <table class="table table-hoverable table-responsive">
+                {% regroup grids.6 by row as row_list %}
+                {% for row, cols in row_list %}
+                {% if forloop.counter == 1 %}
+                <tr>
+                  <th></th>
+                  {% for g in cols %}
+                  <th style="text-align: center">{{forloop.counter}}</th>
+                  {% endfor %}
+                </tr>
+                {% endif %}
+                <tr>
+                   <td><strong>{{ row }}</strong></td>
+                   {% for g in cols %}
+                   <td style="text-align: center;
+                      {% if g.id %}background-color: lime{% endif %}">
+                      {{g.id}}
+                  </td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </table>
+              {% endif %}
+            </div>
+          </div> <!-- Position 6 ends -->
+        </div> <!-- First row ends -->
+        <div class="row">
+          <div class="panel panel-primary col-md-4">
+            <div class="panel-heading">
+              <div class="row">
+                <span class="col-md-12" style="text-align: center">
+                  <h3>1</h3>
+                </span>
+              </div>
+            </div>
+            <div class="panel-body">
+              {% if 1 in trays %}
+              <table class="table table-hoverable table-responsive">
+                {% regroup grids.1 by row as row_list %}
+                {% for row, cols in row_list %}
+                {% if forloop.counter == 1 %}
+                <tr>
+                  <th></th>
+                  {% for g in cols %}
+                  <th style="text-align: center">{{forloop.counter}}</th>
+                  {% endfor %}
+                </tr>
+                {% endif %}
+                <tr>
+                   <td><strong>{{ row }}</strong></td>
+                   {% for g in cols %}
+                   <td style="text-align: center;
+                      {% if g.id %}background-color: lime{% endif %}">
+                      {{g.id}}
+                  </td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </table>
+              {% endif %}
+            </div>
+          </div> <!-- Position 1 ends -->
+          <div class="panel panel-primary col-md-4">
+            <div class="panel-heading">
+              <div class="row">
+                <span class="col-md-12" style="text-align: center">
+                  <h3>2</h3>
+                </span>
+              </div>
+            </div>
+            <div class="panel-body">
+              {% if 2 in trays %}
+              <table class="table table-hoverable table-responsive">
+                {% regroup grids.2 by row as row_list %}
+                {% for row, cols in row_list %}
+                {% if forloop.counter == 1 %}
+                <tr>
+                  <th></th>
+                  {% for g in cols %}
+                  <th style="text-align: center">{{forloop.counter}}</th>
+                  {% endfor %}
+                </tr>
+                {% endif %}
+                <tr>
+                   <td><strong>{{ row }}</strong></td>
+                   {% for g in cols %}
+                   <td style="text-align: center;
+                      {% if g.id %}background-color: lime{% endif %}">
+                      {{g.id}}
+                  </td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </table>
+              {% endif %}
+            </div>
+          </div> <!-- Position 2 ends -->
+          <div class="panel panel-primary col-md-4">
+            <div class="panel-heading">
+              <div class="row">
+                <span class="col-md-12" style="text-align: center">
+                  <h3>3</h3>
+                </span>
+              </div>
+            </div>
+            <div class="panel-body">
+              {% if 3 in trays %}
+              <table class="table table-hoverable table-responsive">
+                {% regroup grids.3 by row as row_list %}
+                {% for row, cols in row_list %}
+                {% if forloop.counter == 1 %}
+                <tr>
+                  <th></th>
+                  {% for g in cols %}
+                  <th style="text-align: center">{{forloop.counter}}</th>
+                  {% endfor %}
+                </tr>
+                {% endif %}
+                <tr>
+                   <td><strong>{{ row }}</strong></td>
+                   {% for g in cols %}
+                   <td style="text-align: center;
+                      {% if g.id %}background-color: lime{% endif %}">
+                      {{g.id}}
+                  </td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </table>
+              {% endif %}
+            </div>
+          </div> <!-- Position 3 ends -->
+        </div> <!-- Second row ends -->
+      </div> <!-- Racks tray ends -->
+    </div> <!-- Robot display ends -->
+    {% endif %}
+    {% endblock %}

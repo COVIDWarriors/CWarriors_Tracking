@@ -3,7 +3,8 @@
 # $Id: $
 from django.shortcuts import render,get_object_or_404
 from django.http import HttpResponse,HttpResponseRedirect,JsonResponse
-from django.core.urlresolvers import reverse
+from django.http import HttpResponseForbidden
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages
 from django.conf import settings
@@ -620,4 +621,115 @@ def printrack(request,rackid):
     grid = populate(rack)
     return render(request,'tracing/fullrack.html',{'rack': rack, 'grid': grid })
 
+def simulate(request,robotid=None,action=None):
+    """
+    Simulates a robot sending movements.
+    It is intended for testing the behaviour of the application when
+    a protocol running on a robot notfies sample moves to the system.
+    It uses the current session as storage.
+    For this to work, robots MUST (RFC 2119) be "virtual" ones,
+    i.e. they should have IP addresses that are valid only in the server
+    that is executing the movement simulation.
+    The tested approach creates a virtual network interface and adds
+    private IPv6 addresses (ff00/8) for each robot on it. This requires
+    that the server also has an IPv6 address (could also be addeded on the
+    virtual interface).
+    """
 
+    import json
+
+    robots = Robot.objects.all()
+    # Start of simulation
+    if request.method == 'GET' and not robotid:
+        return render(request,'tracing/simulate.html',{'robots': robots})
+
+    # Robot selection
+    if request.method == 'POST' and not robotid:
+        robotid = request.POST.get('robotid',None)
+        if not robotid: 
+            return HttpResponseRedirect(reverse('tracing:simulate'))
+        return HttpResponseRedirect(reverse('tracing:simulate',
+                                            kwargs={'robotid':robotid}))
+
+    # We are acting on a certain robot, there MUST (RFC2119) be a robotid
+    # If there is no id for the robot, this smells fishy
+    if not robotid: return HttpResponseForbidden()
+
+    # Only GET or POST accepted here
+    if not request.method in ['GET','POST']: return HttpResponseForbidden()
+
+    # Simulation for a given robot, so we need to load the robot proper
+    # Robot should exist, but ...
+    robot = get_object_or_404(Robot,id=robotid)
+    # Do we have work for this robot?
+    moves = request.session.get('simmov{}'.format(robot.id),'[]')
+    moves = json.loads(moves)
+    # Get the trays and racks for displaying
+    trays = []
+    grids = {}
+    for rack in robot.rack_set.all():
+        trays.append(rack.position)
+        grids[rack.position] = populate(rack)
+
+    # No action requested, present the robot
+    if not action:
+        return render(request,'tracing/simulate.html',{'robots': robots,
+                                                       'robot': robot,
+                                                       'trays': trays,
+                                                       'grids': grids,
+                                                       'moves': moves })
+
+    # Add move
+    if action == 'a':
+        # Get data from "movement" form
+        move = {'source':{},'destination':{}}
+        move['source']['tray'] = request.POST.get('stray',False)
+        move['source']['row'] = request.POST.get('srow',False)
+        move['source']['col'] = request.POST.get('scol',False)
+        move['destination']['tray'] = request.POST.get('dtray',False)
+        move['destination']['row'] = request.POST.get('drow',False)
+        move['destination']['col'] = request.POST.get('dcol',False)
+        if (not move['source']['tray'] or
+            not move['source']['row'] or
+            not move['source']['col'] or
+            not move['destination']['tray'] or
+            not move['destination']['row'] or
+            not move['destination']['col'] ):
+            messages.error(request,_('Movement information was incorrect'))
+        else:
+            moves.append(move)
+
+    # Clear pending movements
+    if action == 'c': moves = []
+
+    # Execute pending moves
+    if action == 'm':
+        # This is the only place where we need requests
+        import requests
+        # We need to change the source address
+        from requests_toolbelt.adapters import source
+        # We need a session
+        s = requests.Session()
+        # No proxies needed
+        s.trust_env=False
+        # We use our own server name, from the authorized names in the list
+        # but avoiding localhost, it has to be routeable somehow.
+        for name in settings.ALLOWED_HOSTS:
+            if not name in ['127.0.0.1','::1','localhost']: break
+
+        s.mount('https://{}'.format(name),
+                source.SourceAddressAdapter(robot.ip))
+        u = 'https://{}{}'.format(name, reverse('tracing:movesample'))
+                                  #request.path.replace(request.path_info,''),
+        r = s.post(u,json=moves)
+        if not r.status_code == 200:
+            # Something went wrong
+            messages.error(request,_('Moves failed: {}').format(r.reason))
+        else:
+            # Clear the moves
+            moves = []
+
+    # Finally, we update the session and re-paint the robot
+    request.session['simmov{}'.format(robot.id)] = json.dumps(moves)
+    return HttpResponseRedirect(reverse('tracing:simulate',
+                                        kwargs={'robotid':robotid}))
