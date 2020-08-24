@@ -46,21 +46,11 @@ $Id: $
           <form id="moveform" method="POST" class="form-horizontal"
                 action="{% url 'tracing:simulate' robot.id 'a' %}">
             {% csrf_token %}
-            <select id="stray" name="stray">
-              <option value=""></option>
-              {% for t in trays %}
-              <option value="{{t}}">{{t}}</option>
-              {% endfor %}
-            </select>:
+            <input type="text" max-length="1" id="stray" name="stray">
             <input type="text" max-length="1" id="srow" name="srow">
             <input type="text" max-length="2" id="scol" name="scol">
             =&gt;
-            <select id="dtray" name="dtray">
-              <option value=""></option>
-              {% for t in trays %}
-              <option value="{{t}}">{{t}}</option>
-              {% endfor %}
-            </select>:
+            <input type="text" max-length="1" id="dtray" name="dtray">
             <input type="text" max-length="1" id="drow" name="drow">
             <input type="text" max-length="2" id="dcol" name="dcol">
             <input type="Submit" class="btn btn-info"
@@ -69,15 +59,15 @@ $Id: $
           {% endif %}
         </div>
         <div class="row">
-          {% for m in moves %}
-          ({{m.source.tray}}:{{m.source.row}}{{m.source.col}} =&gt;
-          {{m.destination.tray}}:{{m.destination.row}}{{m.destination.col}})
-          {% endfor %}
           {% if moves %}
           <a href="{% url 'tracing:simulate' robot.id 'm' %}"
              class="btn btn-default">
             {% trans "Send" %}
           </a>
+          {% for m in moves %}
+          ({{m.source.tray}}:{{m.source.row}}{{m.source.col}} =&gt;
+          {{m.destination.tray}}:{{m.destination.row}}{{m.destination.col}})
+          {% endfor %}
           <a href="{% url 'tracing:simulate' robot.id 'c' %}"
              class="btn btn-default">
             {% trans "Clear moves" %}

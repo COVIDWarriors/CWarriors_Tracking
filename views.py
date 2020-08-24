@@ -563,7 +563,7 @@ def moveSample(request):
             for r in Rack.objects.filter(robot=robot,position__in=[1,3,4,6]):
                 finished = finished and r.isEmpty()
         if robot.station in 'BC':
-            r = Rack.objects.get(robot=robot,position=1)
+            r = Rack.objects.get(robot=robot,position=4)
             finished = r.isEmpty()
         if finished:
             robot.state = 'F'
@@ -621,7 +621,7 @@ def printrack(request,rackid):
     grid = populate(rack)
     return render(request,'tracing/fullrack.html',{'rack': rack, 'grid': grid })
 
-def simulate(request,robotid=None,action=None):
+def simulate(request,robotid=None,action=None,tray=None,line=None):
     """
     Simulates a robot sending movements.
     It is intended for testing the behaviour of the application when

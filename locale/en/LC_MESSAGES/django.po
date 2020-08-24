@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-02 18:44+0200\n"
+"POT-Creation-Date: 2020-08-24 12:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -371,87 +371,123 @@ msgstr ""
 msgid "Removing the rack will simulate processing. Are you sure?"
 msgstr ""
 
+#: tracing/templates/tracing/simulate.html:11
+msgid "Robot selection"
+msgstr ""
+
+#: tracing/templates/tracing/simulate.html:32
+msgid "Select robot"
+msgstr ""
+
+#: tracing/templates/tracing/simulate.html:41
+msgid "Movements"
+msgstr ""
+
+#: tracing/templates/tracing/simulate.html:57
+msgid "Add move"
+msgstr ""
+
+#: tracing/templates/tracing/simulate.html:65
+msgid "Send"
+msgstr ""
+
+#: tracing/templates/tracing/simulate.html:73
+msgid "Clear moves"
+msgstr ""
+
+#: tracing/templates/tracing/simulate.html:84
+msgid "Robot View"
+msgstr ""
+
 #: tracing/templates/tracing/upload.html:50
 msgid "Upload samples"
 msgstr ""
 
-#: tracing/views.py:163 tracing/views.py:184
+#: tracing/views.py:164 tracing/views.py:185
 msgid "Unexpected error while moving"
 msgstr ""
 
-#: tracing/views.py:187
+#: tracing/views.py:188
 #, python-brace-format
 msgid "{0} removed from {1}"
 msgstr ""
 
-#: tracing/views.py:200
+#: tracing/views.py:201
 #, python-brace-format
 msgid "Tray 5 on {0} is occupied"
 msgstr ""
 
-#: tracing/views.py:210
+#: tracing/views.py:211
 #, python-brace-format
 msgid "No trays available on {0}"
 msgstr ""
 
-#: tracing/views.py:219 tracing/views.py:235
+#: tracing/views.py:220 tracing/views.py:236
 #, python-brace-format
 msgid "Tray 4 on {0} is occupied"
 msgstr ""
 
-#: tracing/views.py:226 tracing/views.py:242
+#: tracing/views.py:227 tracing/views.py:243
 #, python-brace-format
 msgid "Tray 1 on {0} is occupied"
 msgstr ""
 
-#: tracing/views.py:249
+#: tracing/views.py:250
 #, python-brace-format
 msgid "{0} placed on tray {1} on {2}"
 msgstr ""
 
-#: tracing/views.py:267 tracing/views.py:284
+#: tracing/views.py:268 tracing/views.py:285
 msgid "Wrong Identifier"
 msgstr ""
 
-#: tracing/views.py:273
+#: tracing/views.py:274
 msgid "Rack is full"
 msgstr ""
 
-#: tracing/views.py:280
+#: tracing/views.py:281
 msgid "No Batch selected"
 msgstr ""
 
-#: tracing/views.py:291
+#: tracing/views.py:292
 #, python-brace-format
 msgid "Wrong Sample Code {0}:{1}"
 msgstr ""
 
-#: tracing/views.py:296
+#: tracing/views.py:297
 #, python-brace-format
 msgid "Sample {0} Added Already"
 msgstr ""
 
-#: tracing/views.py:361
+#: tracing/views.py:362
 msgid "No batch identifier"
 msgstr ""
 
-#: tracing/views.py:401
+#: tracing/views.py:402
 msgid "Sample Id Required"
 msgstr ""
 
-#: tracing/views.py:405
+#: tracing/views.py:406
 msgid "Sample Identifier Required"
 msgstr ""
 
-#: tracing/views.py:410
+#: tracing/views.py:411
 msgid "Wrong Sample Id"
 msgstr ""
 
-#: tracing/views.py:477
+#: tracing/views.py:478
 msgid "Wrong method"
 msgstr ""
 
-#: tracing/views.py:506
+#: tracing/views.py:507
 #, python-brace-format
 msgid "Batch {0} with {1} samples uploaded successfully"
+msgstr ""
+
+#: tracing/views.py:698
+msgid "Movement information was incorrect"
+msgstr ""
+
+#: tracing/views.py:727
+msgid "Moves failed: {}"
 msgstr ""

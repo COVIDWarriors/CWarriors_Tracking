@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tracing 0.9\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-02 18:44+0200\n"
+"POT-Creation-Date: 2020-08-24 12:51+0200\n"
 "PO-Revision-Date: 2020-06-28 18:02+0200\n"
 "Last-Translator: Victoriano Giralt <victoriano@uma.es>\n"
 "Language-Team: COVIDWarriors\n"
@@ -371,90 +371,126 @@ msgstr "Estación C"
 msgid "Removing the rack will simulate processing. Are you sure?"
 msgstr "Quitar el rack simulará el proceso. ¿Está seguro?"
 
+#: tracing/templates/tracing/simulate.html:11
+msgid "Robot selection"
+msgstr ""
+
+#: tracing/templates/tracing/simulate.html:32
+msgid "Select robot"
+msgstr "Seleccionar robot"
+
+#: tracing/templates/tracing/simulate.html:41
+msgid "Movements"
+msgstr "Movimientos"
+
+#: tracing/templates/tracing/simulate.html:57
+msgid "Add move"
+msgstr "Añadir movimiento"
+
+#: tracing/templates/tracing/simulate.html:65
+msgid "Send"
+msgstr "Enviar"
+
+#: tracing/templates/tracing/simulate.html:73
+msgid "Clear moves"
+msgstr "Eliminar movimientos"
+
+#: tracing/templates/tracing/simulate.html:84
+msgid "Robot View"
+msgstr "Vista del robot"
+
 #: tracing/templates/tracing/upload.html:50
 msgid "Upload samples"
 msgstr "Cargar muestras"
 
-#: tracing/views.py:163 tracing/views.py:184
+#: tracing/views.py:164 tracing/views.py:185
 msgid "Unexpected error while moving"
 msgstr "Error inesperado al mover muestras"
 
-#: tracing/views.py:187
+#: tracing/views.py:188
 #, python-brace-format
 msgid "{0} removed from {1}"
 msgstr "{0} quitado de {1}"
 
-#: tracing/views.py:200
+#: tracing/views.py:201
 #, python-brace-format
 msgid "Tray 5 on {0} is occupied"
 msgstr "La bandeja 5 de {0} está ocupada"
 
-#: tracing/views.py:210
+#: tracing/views.py:211
 #, python-brace-format
 msgid "No trays available on {0}"
 msgstr "No hay bandejas libres en {0}"
 
-#: tracing/views.py:219 tracing/views.py:235
+#: tracing/views.py:220 tracing/views.py:236
 #, python-brace-format
 msgid "Tray 4 on {0} is occupied"
 msgstr "La bandeja 4 de {0} está ocupada"
 
-#: tracing/views.py:226 tracing/views.py:242
+#: tracing/views.py:227 tracing/views.py:243
 #, python-brace-format
 msgid "Tray 1 on {0} is occupied"
 msgstr "La bandeja 1 de {0} está ocupada"
 
-#: tracing/views.py:249
+#: tracing/views.py:250
 #, python-brace-format
 msgid "{0} placed on tray {1} on {2}"
 msgstr "{0} colocado en la bandeja {1} de {2}"
 
-#: tracing/views.py:267 tracing/views.py:284
+#: tracing/views.py:268 tracing/views.py:285
 msgid "Wrong Identifier"
 msgstr "Identificador incorrecto"
 
-#: tracing/views.py:273
+#: tracing/views.py:274
 msgid "Rack is full"
 msgstr "El rack está lleno"
 
-#: tracing/views.py:280
+#: tracing/views.py:281
 msgid "No Batch selected"
 msgstr "No se ha seleccionado un lote"
 
-#: tracing/views.py:291
+#: tracing/views.py:292
 #, python-brace-format
 msgid "Wrong Sample Code {0}:{1}"
 msgstr "Código de muestra incorrecto {0}:{1}"
 
-#: tracing/views.py:296
+#: tracing/views.py:297
 #, python-brace-format
 msgid "Sample {0} Added Already"
 msgstr "La muestra {0} ya se ha añadido"
 
-#: tracing/views.py:361
+#: tracing/views.py:362
 msgid "No batch identifier"
 msgstr "No hay identificador de lote"
 
-#: tracing/views.py:401
+#: tracing/views.py:402
 msgid "Sample Id Required"
 msgstr "Falta el identificador de muestra"
 
-#: tracing/views.py:405
+#: tracing/views.py:406
 msgid "Sample Identifier Required"
 msgstr "Falta el código de muestra"
 
-#: tracing/views.py:410
+#: tracing/views.py:411
 msgid "Wrong Sample Id"
 msgstr "Código de muestra incorrecto"
 
-#: tracing/views.py:477
+#: tracing/views.py:478
 msgid "Wrong method"
 msgstr "Método incorrecto"
 
-#: tracing/views.py:506
+#: tracing/views.py:507
 #, python-brace-format
 msgid "Batch {0} with {1} samples uploaded successfully"
 msgstr "Cargado el lote {0} con {1} muestras"
+
+#: tracing/views.py:698
+msgid "Movement information was incorrect"
+msgstr "Información de movimiento incorrecta"
+
+#: tracing/views.py:727
+msgid "Moves failed: {}"
+msgstr "Los movimientos han fallado: {}"
 
 #~ msgid "Deepwell MUST be removed first"
 #~ msgstr "El deepweel se debe retirar primero"
