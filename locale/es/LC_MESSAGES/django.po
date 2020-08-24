@@ -373,7 +373,7 @@ msgstr "Quitar el rack simulará el proceso. ¿Está seguro?"
 
 #: tracing/templates/tracing/simulate.html:11
 msgid "Robot selection"
-msgstr ""
+msgstr "Selección de robot"
 
 #: tracing/templates/tracing/simulate.html:32
 msgid "Select robot"
