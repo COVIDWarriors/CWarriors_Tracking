@@ -608,7 +608,7 @@ def download(request,rackid):
                                                 'tubes':tubes})
     response = HttpResponse(data,content_type='application/csv')
     filename = 'plrn,_{}_.plrn'.format(datetime.datetime.now().isoformat())
-    response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
+    response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
     return response
 
 
