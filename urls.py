@@ -10,7 +10,8 @@ app_name = 'tracing'
 
 racktypes = ''.join(['{0}'.format(t[0]) for t in Rack.TYPE])
 urlpatterns = [
-    url(r'^create/(?P<racktype>[{0}])$'.format(racktypes), views.fill, name='create'),
+    url(r'^create/(?P<racktype>[{0}])$'.format(racktypes), views.fill,
+                                                           name='create'),
     url(r'^fill/(?P<rackid>\d+)$', views.fill, name='fill'),
     url(r'^empty/(?P<rackid>\d+)$', views.empty, name='empty'),
     url(r'^move/(?P<rackid>\d+)/(?P<robotid>\d+)$', views.move, name='move'),
@@ -20,6 +21,10 @@ urlpatterns = [
     url(r'^download/(?P<rackid>\d+)$', views.download, name='download'),
     url(r'^print/(?P<rackid>\d+)$', views.printrack, name='print'),
     url(r'^sample/(?P<sampleid>\d+)$', views.viewsample, name='sample'),
+    url(r'^simulate/(?P<robotid>\d+)$', views.simulate, name='simulate'),
+    url(r'^simulate/(?P<robotid>\d+)/(?P<action>[am])$', views.simulate,
+                                                         name='simulate'),
+    url(r'^simulate$', views.simulate, name='simulate'),
     url(r'^edsample$', views.editsample, name='edsample'),
     url(r'^movesample$', views.moveSample, name='movesample'),
     url(r'^start$', views.start, name='start'),
