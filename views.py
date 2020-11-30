@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # vim:ts=4:expandtab:ai
 # $Id: $
-from django.shortcuts import render,get_object_or_404
-from django.http import HttpResponse,HttpResponseRedirect,JsonResponse
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.http import HttpResponseForbidden
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
@@ -16,7 +16,7 @@ from .forms import loadBatch
 import datetime
 
 # Auxiliary methods
-def place(tube,rack,position=None):
+def place(tube, rack, position=None):
     """
     Places a tube in the next free position of a rack
     """
@@ -35,7 +35,7 @@ def place(tube,rack,position=None):
         row = 'A'
         col = 1
     else:
-        t = rack.tube_set.order_by('col','row').last()
+        t = rack.tube_set.order_by('col', 'row').last()
         if rack.ROWCOLS[rack.racktype][0] == t.row:
             # The column is full, move one right, we cannot reach here if the rack is full
             row = 'A'
@@ -74,7 +74,7 @@ def index(request):
     """
     # No refresh until processing starts on a connected robot
     refresh = False
-    if request.session.get('tracing_atwork',False):
+    if request.session.get('tracing_atwork', False):
         refresh = settings.TRACING_REFRESH
 
     # Prepare the presentation of the robots for the template
@@ -94,20 +94,20 @@ def index(request):
             robot.save()
 
     # Prepare the list of racks that are outside the robots
-    forA = [r for r in Rack.objects.filter(robot=None,passed='') 
+    forA = [r for r in Rack.objects.filter(robot=None, passed='') 
                     if not r.isEmpty() or r.racktype == r.DEEPWELL]
     # Only Deepwells for B and C
-    forB = Rack.objects.filter(robot=None,passed='A',racktype=Rack.DEEPWELL)
-    forB = forB | Rack.objects.filter(robot=None,passed='',racktype=Rack.EP)
-    forC = Rack.objects.filter(robot=None,passed='B',racktype=Rack.EP)
-    forC = forC | Rack.objects.filter(robot=None,passed='',racktype=Rack.PCR)
+    forB = Rack.objects.filter(robot=None, passed='A', racktype=Rack.DEEPWELL)
+    forB = forB | Rack.objects.filter(robot=None, passed='', racktype=Rack.EP)
+    forC = Rack.objects.filter(robot=None, passed='B', racktype=Rack.EP)
+    forC = forC | Rack.objects.filter(robot=None, passed='', racktype=Rack.PCR)
 
     # Find robots with appropriate free positions
     freeA = [x for x in Robot.objects.filter(station='A') if x.libre()]
     freeB = [x for x in Robot.objects.filter(station='B') if x.libre()]
     freeC = [x for x in Robot.objects.filter(station='C') if x.libre()]
 
-    return render(request,'tracing/robots.html',{'astations': astations,
+    return render(request, 'tracing/robots.html', {'astations': astations,
                                                  'bstations': bstations,
                                                  'cstations': cstations,
                                                  'racktypes': Rack.TYPE,
@@ -117,11 +117,11 @@ def index(request):
                                                  'freeB': freeB, 'freeC': freeC})
 
 
-def move(request,rackid,robotid=None):
+def move(request, rackid, robotid=None):
     """
     Moves a rack into or out of a robot
     """
-    rack = get_object_or_404(Rack,id=rackid)
+    rack = get_object_or_404(Rack, id=rackid)
     log = Log()
     if not robotid:
         # It is going out of current robot
@@ -139,11 +139,11 @@ def move(request,rackid,robotid=None):
             # Deepwells must leave station A with all samples in them
             # if there is any
             if (rack.racktype == rack.DEEPWELL and rack.isEmpty()):
-                for tray in [4,1,6,3]:
+                for tray in [4, 1, 6, 3]:
                     r = robot.rack_set.filter(position=tray)
                     if len(r) == 1:
-                        for tube in r[0].tube_set.all().order_by('col','row'):
-                           place(tube,rack)
+                        for tube in r[0].tube_set.all().order_by('col', 'row'):
+                           place(tube, rack)
         # Behaviour for station B
         if robot.station == 'B':
             # Regardless of the rack leaving the robot first,
@@ -151,17 +151,17 @@ def move(request,rackid,robotid=None):
             # We save database hits ...
             if rack.racktype == rack.DEEPWELL:
                 source = [rack]
-                destination = Rack.objects.filter(robot=robot,position=1)
+                destination = Rack.objects.filter(robot=robot, position=1)
             if rack.racktype == rack.EP:
                 destination = [rack]
-                source = Rack.objects.filter(robot=robot,position=4)
+                source = Rack.objects.filter(robot=robot, position=4)
             # Both racks available, move sample from source to destination
             if source and destination:
                 if len(source) == 1 and len(destination) == 1:
-                    for tube in source[0].tube_set.all().order_by('col','row'):
-                        place(tube,destination[0])
+                    for tube in source[0].tube_set.all().order_by('col', 'row'):
+                        place(tube, destination[0])
                 else:
-                    messages.error(request,_('Unexpected error while moving'))
+                    messages.error(request, _('Unexpected error while moving'))
                     return HttpResponseRedirect(reverse('tracing:inicio'))
         # Behaviour for station C
         if robot.station == 'C':
@@ -170,28 +170,28 @@ def move(request,rackid,robotid=None):
             # We save database hits ...
             if rack.racktype == rack.EP:
                 source = [rack]
-                destination = Rack.objects.filter(robot=robot,position=1)
+                destination = Rack.objects.filter(robot=robot, position=1)
             if rack.racktype == rack.PCR:
                 destination = [rack]
-                source = Rack.objects.filter(robot=robot,position=4)
+                source = Rack.objects.filter(robot=robot, position=4)
             # Both racks available, move sample from source to destination
             if source and destination:
                 if len(source) == 1 and len(destination) == 1:
-                    for tube in source[0].tube_set.all().order_by('col','row'):
-                        place(tube,destination[0])
+                    for tube in source[0].tube_set.all().order_by('col', 'row'):
+                        place(tube, destination[0])
                         tube.sample.finished = True
                         tube.sample.save()
                 else:
-                    messages.error(request,_('Unexpected error while moving'))
+                    messages.error(request, _('Unexpected error while moving'))
                     return HttpResponseRedirect(reverse('tracing:inicio'))
         # Common behaviour for outgoing racks
-        messages.success(request,_('{0} removed from {1}').format(rack,robot))
+        messages.success(request, _('{0} removed from {1}').format(rack, robot))
         rack.robot = None
         rack.save()
         log.what = 'O'
     else:
         # Behaviour for racks entering a robot
-        robot = get_object_or_404(Robot,id=robotid)
+        robot = get_object_or_404(Robot, id=robotid)
         # Behaviour for station A
         if robot.station == 'A':
             # Deepwells can only be placed at position 5
@@ -205,7 +205,7 @@ def move(request,rackid,robotid=None):
                 # Use first free position
                 used = [x.position for x in robot.rack_set.all()
                         if not x.position ==  5]
-                empty = [x for x in [4,1,6,3] if x not in used]
+                empty = [x for x in [4, 1, 6, 3] if x not in used]
                 if len(empty) == 0:
                     messages.error(request,
                                    _('No trays available on {0}').format(robot))
@@ -247,7 +247,7 @@ def move(request,rackid,robotid=None):
         rack.robot = robot
         log.what = 'I'
         messages.success(request,
-                _('{0} placed on tray {1} on {2}').format(rack,rack.position,robot))
+                _('{0} placed on tray {1} on {2}').format(rack, rack.position, robot))
     # Common behaviour for IN and OUT
     rack.save()
     log.robot = robot
@@ -257,10 +257,10 @@ def move(request,rackid,robotid=None):
     return HttpResponseRedirect(reverse('tracing:inicio'))
 
 
-def insert(request,rackid):
+def insert(request, rackid):
     """
     Inserts a sample in the next free well in a given rack.
-    The algorithm works in column first mode, i.e.: A1,B1,C1,...F12,G12,H12
+    The algorithm works in column first mode, i.e.: A1, B1, C1, ...F12, G12, H12
     """
     
     racks = Rack.objects.filter(pk=rackid)
@@ -274,9 +274,9 @@ def insert(request,rackid):
         response = JsonResponse({"error": _("Rack is full")})
         response.status_code = 404
         return response
-    batchid = request.session.get('batch',0)
+    batchid = request.session.get('batch', 0)
     if request.method == 'POST':
-       identifier = request.POST.get('identifier',None)
+       identifier = request.POST.get('identifier', None)
     if not batchid:
         response = JsonResponse({"error": _("No Batch selected")})
         response.status_code = 404
@@ -285,8 +285,8 @@ def insert(request,rackid):
         response = JsonResponse({"error": _("Wrong Identifier")})
         response.status_code = 404
         return response
-    batch = get_object_or_404(Batch,identifier=batchid)
-    sample = Sample.objects.filter(batch=batch,code=identifier)
+    batch = get_object_or_404(Batch, identifier=batchid)
+    sample = Sample.objects.filter(batch=batch, code=identifier)
     if batch.preloaded and not len(sample) == 1:
         return JsonResponse({"error":
                              _("Wrong Sample Code {0}:{1}").format(batchid,
@@ -307,7 +307,7 @@ def insert(request,rackid):
     tube = Tube()
     tube.sample = sample[0] # We used filter, so, we have a QuerySet with one object
     # Place tube in the next free position
-    place(tube,rack)
+    place(tube, rack)
     tube.save()
     # If it is the first sample from a batch, we mark the start of processing
     if not sample[0].batch.started:
@@ -318,7 +318,7 @@ def insert(request,rackid):
                          'sample': sample[0].code})
 
 
-def fill(request,rackid=None,racktype=None):
+def fill(request, rackid=None, racktype=None):
     """
     Creates an empty rack and presents a page to fill it.
     """
@@ -335,15 +335,15 @@ def fill(request,rackid=None,racktype=None):
             rack = Rack()
             rack.racktype = racktype
             rack.save()
-            nextpage = reverse('tracing:fill',kwargs={'rackid': rack.id})
+            nextpage = reverse('tracing:fill', kwargs={'rackid': rack.id})
             if int(racktype) in [rack.DEEPWELL, rack.EP, rack.PCR]:
                 # "Output" racks start life empty, no need to fill them
                 nextpage = reverse('tracing:inicio')
             return HttpResponseRedirect(nextpage)
         if rackid and not racktype:
             # We want a given rack to display and fill
-            rack = get_object_or_404(Rack,id=rackid)
-            batchid = request.session.get('batch',0)
+            rack = get_object_or_404(Rack, id=rackid)
+            batchid = request.session.get('batch', 0)
             batch = None
             if batchid:
                 batches = Batch.objects.filter(identifier=batchid)
@@ -355,27 +355,27 @@ def fill(request,rackid=None,racktype=None):
 
     if rackid and request.method == 'POST':
         # POSTs set the Batch ID for the samples that will fill the racks
-        batchid = request.POST.get('batchid',False)
+        batchid = request.POST.get('batchid', False)
         # We want a given rack to display and fill
-        rack = get_object_or_404(Rack,id=rackid)
+        rack = get_object_or_404(Rack, id=rackid)
         if not batchid:
-            messages.error(request,_('No batch identifier'))
+            messages.error(request, _('No batch identifier'))
         else:
             request.session['batch'] = batchid
-            batch = get_object_or_404(Batch,identifier=batchid)
+            batch = get_object_or_404(Batch, identifier=batchid)
 
     # Fill the grid for presenting on the template
     grid = populate(rack)
 
-    return render(request,'tracing/rack_fill.html',
+    return render(request, 'tracing/rack_fill.html',
                   {'rack': rack, 'grid': grid, 'batch': batch, 'pending': pending})
 
 
-def empty(request,rackid):
+def empty(request, rackid):
     """
     Removes all samples from a rack
     """
-    rack = get_object_or_404(Rack,id=rackid)
+    rack = get_object_or_404(Rack, id=rackid)
     for tube in rack.tube_set.all():
         tube.sample = None
         tube.delete()
@@ -383,12 +383,12 @@ def empty(request,rackid):
                                         kwargs={'rackid': rack.id}))
 
 
-def viewsample(request,sampleid):
+def viewsample(request, sampleid):
     """
     Show sample information
     """
-    sample = get_object_or_404(Sample,id=sampleid)
-    return render(request,'tracing/sample.html',{'sample': sample })
+    sample = get_object_or_404(Sample, id=sampleid)
+    return render(request, 'tracing/sample.html', {'sample': sample })
 
 
 def editsample(request):
@@ -396,8 +396,8 @@ def editsample(request):
     Change sample code
     """
     if request.method == 'POST':
-       sampleid = request.POST.get('sid',None)
-       identifier = request.POST.get('scod',None)
+       sampleid = request.POST.get('sid', None)
+       identifier = request.POST.get('scod', None)
     if not sampleid:
         response = JsonResponse({"error": _("Sample Id Required")})
         response.status_code = 404
@@ -415,17 +415,17 @@ def editsample(request):
     sample = samples[0]
     sample.code = identifier
     sample.save()
-    return JsonResponse({'id': sample.id,'code': sample.code})
+    return JsonResponse({'id': sample.id, 'code': sample.code})
 
 
-def show(request,rackid):
+def show(request, rackid):
     """
     Presents a grid with the samples in a rack.
     """
-    rack = get_object_or_404(Rack,id=rackid)
+    rack = get_object_or_404(Rack, id=rackid)
     # Fill the grid for presenting on the template
     grid = populate(rack)
-    return render(request,'tracing/rack.html',{'rack': rack, 'grid': grid })
+    return render(request, 'tracing/rack.html', {'rack': rack, 'grid': grid })
 
 
 def history(request):
@@ -446,19 +446,19 @@ def history(request):
     if request.method == 'GET':
        date = lastdate
     if request.method == 'POST':
-        date = request.POST.get('date',False)
-        batchid = request.POST.get('batchid',False)
+        date = request.POST.get('date', False)
+        batchid = request.POST.get('batchid', False)
     if date:
         logs = Log.objects.filter(createdOn__date=date)
     else:
         logs = Log.objects.all()
     if batchid:
-        batch = get_object_or_404(Batch,id=batchid)
+        batch = get_object_or_404(Batch, id=batchid)
         racks = [ s.tube_set.first().rack for s in batch.sample_set.all()
                                           if s.tube_set.first()]
         logs = logs.filter(rack__in=racks)
 
-    return render(request,'tracing/logs.html',
+    return render(request, 'tracing/logs.html',
                   {'logs': logs, 'batchid': batchid, 'batches': batches,
                    'batch': batch, 'date': date, 'dates': dates})
 
@@ -467,20 +467,20 @@ def upload(request):
     """
     Creates a sample batch from a CSV file (only the "code" field is used)
     First row should look like (ellipsys means other discarded columns):
-    ...,code,... OR ...,"code",...
+    ..., code, ... OR ..., "code", ...
     Subsequent rows shoud look like:
-    ...,sample-code,...
+    ..., sample-code, ...
     """
     if request.method == 'GET':
         form = loadBatch()
-        return render(request,'tracing/upload.html',{'form': form})
+        return render(request, 'tracing/upload.html', {'form': form})
     if not request.method == 'POST':
       messages.error(_('Wrong method'))
       return HttpResponseRedirect(reverse('tracing:inicio'))
 
     form = loadBatch(request.POST, request.FILES)
     if not form.is_valid():
-        return render(request,'tracing/upload.html',{'form': form})
+        return render(request, 'tracing/upload.html', {'form': form})
 
     batch = Batch()
     if form.cleaned_data['batchid']:
@@ -492,7 +492,7 @@ def upload(request):
     # If we do not have a file, it's a "pre-loaded" batch
     if len(request.FILES):
         samples = request.FILES['samples']
-        import csv,io
+        import csv, io
         samples.seek(0)
         lines = csv.DictReader(io.StringIO(samples.read().decode('utf-8')))
         for line in lines:
@@ -505,7 +505,7 @@ def upload(request):
         batch.save()
     messages.success(request,
                      _('Batch {0} with {1} samples uploaded successfully').format(
-                       batch.identifier,len(batch.sample_set.all())))
+                       batch.identifier, len(batch.sample_set.all())))
     return HttpResponseRedirect(reverse('tracing:inicio'))
 
 
@@ -521,14 +521,14 @@ def moveSample(request):
 
     # We are expecting a POST request, any other type is an error
     if not request.method == 'POST':
-       return HttpResponse("Bad method",status=400,content_type="text/plain") 
+       return HttpResponse("Bad method", status=400, content_type="text/plain") 
     # We first verify that the request comes from one of our robots
     # They MUST (RFC 2119) be directly connected to the server
     remoteip = request.META.get('REMOTE_ADDR')
-    robot = get_object_or_404(Robot,ip=remoteip)
+    robot = get_object_or_404(Robot, ip=remoteip)
     if robot.state == 'E':
         return HttpResponse("Robot is empty",
-                            status=400,content_type="text/plain") 
+                            status=400, content_type="text/plain") 
     import json
     datalist = json.loads(request.body)
     if type(datalist) == dict:
@@ -536,19 +536,19 @@ def moveSample(request):
         datalist = [datalist]
     for data in datalist:
         # Get source rack
-        rackO = get_object_or_404(Rack,robot=robot,
+        rackO = get_object_or_404(Rack, robot=robot,
                                        position=data['source']['tray'])
         # Get moving tube, acually tubes do not move,
         # but this was first try code, it will be fixed a some point in time
-        tube = get_object_or_404(Tube,rack=rackO,
+        tube = get_object_or_404(Tube, rack=rackO,
                                       row=data['source']['row'],
                                       col=data['source']['col'])
         # Get destination rack
-        rackD = get_object_or_404(Rack,robot=robot,
+        rackD = get_object_or_404(Rack, robot=robot,
                                        position=data['destination']['tray'])
 
         # Do the move
-        place(tube,rackD,(data['destination']['row'],
+        place(tube, rackD, (data['destination']['row'],
                           data['destination']['col']))
 
     # Let's mark robot as processing
@@ -560,16 +560,16 @@ def moveSample(request):
     if robot.state == 'P':
         if robot.station == 'A':
             finished = True
-            for r in Rack.objects.filter(robot=robot,position__in=[1,3,4,6]):
+            for r in Rack.objects.filter(robot=robot, position__in=[1, 3, 4, 6]):
                 finished = finished and r.isEmpty()
         if robot.station in 'BC':
-            r = Rack.objects.get(robot=robot,position=4)
+            r = Rack.objects.get(robot=robot, position=4)
             finished = r.isEmpty()
         if finished:
             robot.state = 'F'
             robot.save()
 
-    return HttpResponse("OK",status=200,content_type="text/plain") 
+    return HttpResponse("OK", status=200, content_type="text/plain") 
     
 
 def start(request):
@@ -585,16 +585,16 @@ def stop(request):
     Stops refreshing the robot display and waiting for movements
     """
     # Safewarding, just in case
-    if request.session.get('tracing_atwork',False):
+    if request.session.get('tracing_atwork', False):
         del (request.session['tracing_atwork'])
     return HttpResponseRedirect(reverse('tracing:inicio'))
 
-def download(request,rackid):
+def download(request, rackid):
     """
     Generates a 'CSV' file for the Thermo
     """
 
-    rack = get_object_or_404(Rack,id=rackid)
+    rack = get_object_or_404(Rack, id=rackid)
     tubes = rack.tube_set.all()
     batches = []
     procedure = None
@@ -603,25 +603,25 @@ def download(request,rackid):
             procedure = s.batch.procedure
         if s.batch.identifier not in batches:
             batches.append(s.batch.identifier)
-    data = render(request,'tracing/tmplt.plrn',{'batches':batches,
+    data = render(request, 'tracing/tmplt.plrn', {'batches':batches,
                                                 'p':procedure,
                                                 'tubes':tubes})
-    response = HttpResponse(data,content_type='application/csv')
-    filename = 'plrn,_{}_.plrn'.format(datetime.datetime.now().isoformat())
+    response = HttpResponse(data, content_type='application/csv')
+    filename = 'plrn, _{}_.plrn'.format(datetime.datetime.now().isoformat())
     response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
     return response
 
 
-def printrack(request,rackid):
+def printrack(request, rackid):
     """
     Presents a rack for printing
     """
-    rack = get_object_or_404(Rack,id=rackid)
+    rack = get_object_or_404(Rack, id=rackid)
     # Fill the grid for presenting on the template
     grid = populate(rack)
-    return render(request,'tracing/fullrack.html',{'rack': rack, 'grid': grid })
+    return render(request, 'tracing/fullrack.html', {'rack': rack, 'grid': grid })
 
-def simulate(request,robotid=None,action=None,tray=None,line=None):
+def simulate(request, robotid=None, action=None, tray=None, line=None):
     """
     Simulates a robot sending movements.
     It is intended for testing the behaviour of the application when
@@ -641,11 +641,11 @@ def simulate(request,robotid=None,action=None,tray=None,line=None):
     robots = Robot.objects.all()
     # Start of simulation
     if request.method == 'GET' and not robotid:
-        return render(request,'tracing/simulate.html',{'robots': robots})
+        return render(request, 'tracing/simulate.html', {'robots': robots})
 
     # Robot selection
     if request.method == 'POST' and not robotid:
-        robotid = request.POST.get('robotid',None)
+        robotid = request.POST.get('robotid', None)
         if not robotid: 
             return HttpResponseRedirect(reverse('tracing:simulate'))
         return HttpResponseRedirect(reverse('tracing:simulate',
@@ -656,13 +656,13 @@ def simulate(request,robotid=None,action=None,tray=None,line=None):
     if not robotid: return HttpResponseForbidden()
 
     # Only GET or POST accepted here
-    if not request.method in ['GET','POST']: return HttpResponseForbidden()
+    if not request.method in ['GET', 'POST']: return HttpResponseForbidden()
 
     # Simulation for a given robot, so we need to load the robot proper
     # Robot should exist, but ...
-    robot = get_object_or_404(Robot,id=robotid)
+    robot = get_object_or_404(Robot, id=robotid)
     # Do we have work for this robot?
-    moves = request.session.get('simmov{}'.format(robot.id),'[]')
+    moves = request.session.get('simmov{}'.format(robot.id), '[]')
     moves = json.loads(moves)
     # Get the trays and racks for displaying
     trays = []
@@ -673,7 +673,7 @@ def simulate(request,robotid=None,action=None,tray=None,line=None):
 
     # No action requested, present the robot
     if not action:
-        return render(request,'tracing/simulate.html',{'robots': robots,
+        return render(request, 'tracing/simulate.html', {'robots': robots,
                                                        'robot': robot,
                                                        'trays': trays,
                                                        'grids': grids,
@@ -682,20 +682,20 @@ def simulate(request,robotid=None,action=None,tray=None,line=None):
     # Add move
     if action == 'a':
         # Get data from "movement" form
-        move = {'source':{},'destination':{}}
-        move['source']['tray'] = request.POST.get('stray',False)
-        move['source']['row'] = request.POST.get('srow',False)
-        move['source']['col'] = request.POST.get('scol',False)
-        move['destination']['tray'] = request.POST.get('dtray',False)
-        move['destination']['row'] = request.POST.get('drow',False)
-        move['destination']['col'] = request.POST.get('dcol',False)
+        move = {'source':{}, 'destination':{}}
+        move['source']['tray'] = request.POST.get('stray', False)
+        move['source']['row'] = request.POST.get('srow', False)
+        move['source']['col'] = request.POST.get('scol', False)
+        move['destination']['tray'] = request.POST.get('dtray', False)
+        move['destination']['row'] = request.POST.get('drow', False)
+        move['destination']['col'] = request.POST.get('dcol', False)
         if (not move['source']['tray'] or
             not move['source']['row'] or
             not move['source']['col'] or
             not move['destination']['tray'] or
             not move['destination']['row'] or
             not move['destination']['col'] ):
-            messages.error(request,_('Movement information was incorrect'))
+            messages.error(request, _('Movement information was incorrect'))
         else:
             moves.append(move)
 
@@ -715,17 +715,17 @@ def simulate(request,robotid=None,action=None,tray=None,line=None):
         # We use our own server name, from the authorized names in the list
         # but avoiding localhost, it has to be routeable somehow.
         for name in settings.ALLOWED_HOSTS:
-            if not name in ['127.0.0.1','::1','localhost']: break
+            if not name in ['127.0.0.1', '::1', 'localhost']: break
 
         s.mount('http://{}'.format(name),
                 source.SourceAddressAdapter(robot.ip))
         u = 'http://{}{}{}'.format(name,
-                                   request.path.replace(request.path_info,''),
+                                   request.path.replace(request.path_info, ''),
                                    reverse('tracing:movesample'))
-        r = s.post(u,json=moves)
+        r = s.post(u, json=moves)
         if not r.status_code == 200:
             # Something went wrong
-            messages.error(request,_('Moves failed: {}').format(r.reason))
+            messages.error(request, _('Moves failed: {}').format(r.reason))
         else:
             # Clear the moves
             moves = []
